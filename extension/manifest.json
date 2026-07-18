@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Verdict",
+  "short_name": "Verdict",
+  "version": "0.1.0",
+  "description": "Runs Verdict's contrast, type-scale, spacing, and heading checks against the page you're looking at, live, no CLI required.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Run Verdict on this page"
+  },
+  "permissions": ["activeTab", "scripting"],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

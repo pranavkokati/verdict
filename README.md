@@ -195,9 +195,17 @@ On unprivileged Linux containers (some self-hosted runners, some sandboxes) `pla
 
 `.github/workflows/release.yml` publishes to npm automatically on a version tag (`git tag v0.3.0 && git push --tags`), gated behind the same test suite. Requires an `NPM_TOKEN` repo secret.
 
+## Browser extension
+
+`extension/` runs the same four checks against whatever tab you have open, live, no CLI and no build output required. It's a direct, dependency-free port of `src/render/browser.ts` and `src/checks/*.ts` -- same constants and formulas, not a lighter reimplementation -- because those modules already had zero Node/Playwright dependency. Load it unpacked from `chrome://extensions` (Developer mode -> Load unpacked -> select `extension/`). See `extension/README.md`.
+
+## Agent integration (MCP)
+
+`mcp-server/` exposes `verdict_check`, `verdict_diff`, and `verdict_crawl` as MCP tools, so a coding agent -- Claude Code, Cursor, anything that speaks MCP -- can call Verdict directly mid-task instead of a human running the CLI and pasting output back in. This is deliberately not a bundled VLM: instead of Verdict shipping its own model to judge subjective calls, it hands its deterministic findings to whatever agent already has the reasoning and context. See `mcp-server/README.md`.
+
 ## What's honestly not built yet
 
-This is v0.3. Score history, regression gating, visual diffing, and multi-page crawling are real and tested (see `test/` -- 8 tests, all against actually-rendered fixtures, none mocked). Still not built: a hosted dashboard, a VLM-based aesthetic-critique check, and a browser extension. Those are the natural next steps -- not implemented, not claimed as implemented.
+This is v0.3. Score history, regression gating, visual diffing, multi-page crawling, the browser extension, and the MCP server are real and tested (`test/` -- 8 automated tests against actually-rendered fixtures, none mocked; the MCP server additionally verified end-to-end over the real JSON-RPC protocol against the same fixtures). Still not built: a hosted dashboard. That's the natural next step -- not implemented, not claimed as implemented.
 
 ## License
 
