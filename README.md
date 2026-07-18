@@ -24,10 +24,6 @@ npx verdict-ui check ./dist/index.html
 
 Exit code is `0` on pass, `1` on fail -- so `verdict check` gates a CI pipeline the same way `eslint` or `tsc --noEmit` does.
 
-## Why this exists, and how it's different from prompt-injection "taste" tools
-
-Tools like Skillform (skillform.ideatr.dev) work by aggregating other people's design-guideline prompt packs (Taste Skill, Impeccable, Anthropic's frontend-design skill, Vercel's design guidelines) and injecting them into an agent's context before it writes UI code. That's a reasonable idea, but it's **open-loop**: the tool has no way to confirm the agent actually followed the guidance. You get a `SKILL.md` and a prompt; you don't get proof.
-
 Verdict is **closed-loop**. It doesn't tell the agent what to do -- it checks what the agent actually did:
 
 1. It renders the real, final HTML/CSS in headless Chromium via Playwright -- actual computed styles and layout boxes, not a static text/AST guess.
