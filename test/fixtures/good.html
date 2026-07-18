@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Good Fixture</title>
+<style>
+  :root { --space-1: 8px; --space-2: 16px; --space-3: 24px; --space-4: 32px; }
+  * { box-sizing: border-box; }
+  body { font-family: sans-serif; margin: 0; background: #ffffff; color: #1a1a1a; }
+  header { background: #0f172a; padding: var(--space-3) var(--space-4); }
+  header h1 { color: #ffffff; font-size: 32px; margin: 0; }
+  main { padding: var(--space-4); }
+  main h2 { font-size: 24px; color: #0f172a; margin: 0 0 var(--space-2) 0; }
+  main h3 { font-size: 18px; color: #1a1a1a; margin: var(--space-3) 0 var(--space-1) 0; }
+  main p { font-size: 16px; color: #334155; margin: 0 0 var(--space-2) 0; line-height: 1.6; }
+  .card { background: #f8fafc; padding: var(--space-2); margin-bottom: var(--space-2); border-radius: 8px; }
+  footer { padding: var(--space-3) var(--space-4); background: #f1f5f9; }
+  footer p { font-size: 14px; color: #475569; margin: 0; }
+</style>
+</head>
+<body>
+  <header role="banner">
+    <h1>Product Name</h1>
+  </header>
+  <main>
+    <h2>Section heading</h2>
+    <p>Readable body copy with strong contrast against a white background.</p>
+    <div class="card">
+      <h3>Card title</h3>
+      <p>Card body copy, also readable, spacing on an 8px grid throughout.</p>
+    </div>
+  </main>
+  <footer>
+    <p>Footer text, small but still well above the AA contrast minimum.</p>
+  </footer>
+</body>
+</html>

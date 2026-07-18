@@ -1,0 +1,244 @@
+{
+  "score": 50,
+  "threshold": 80,
+  "passed": false,
+  "target": "test/fixtures/bad.html",
+  "timestamp": "2026-07-18T14:51:38.138Z",
+  "issues": [
+    {
+      "check": "contrast",
+      "severity": "error",
+      "message": "Text \"Welcome\" has 1.43:1 contrast against its background, below the WCAG AA minimum for normal text.",
+      "selector": "html > body > div.hero:nth-of-type(1) > h3",
+      "measured": "1.43:1",
+      "required": "4.5:1",
+      "fix": "Change text color to #6e6e6e (or darken/lighten equivalently) to reach 4.5:1."
+    },
+    {
+      "check": "contrast",
+      "severity": "error",
+      "message": "Text \"This is some body copy that is very har…\" has 1.21:1 contrast against its background, below the WCAG AA minimum for normal text.",
+      "selector": "html > body > div.hero:nth-of-type(1) > p",
+      "measured": "1.21:1",
+      "required": "4.5:1",
+      "fix": "Change text color to #6d6d6d (or darken/lighten equivalently) to reach 4.5:1."
+    },
+    {
+      "check": "contrast",
+      "severity": "error",
+      "message": "Text \"Card content with an oddly specific fon…\" has 1.26:1 contrast against its background, below the WCAG AA minimum for normal text.",
+      "selector": "html > body > div.card:nth-of-type(2)",
+      "measured": "1.26:1",
+      "required": "4.5:1",
+      "fix": "Change text color to #757575 (or darken/lighten equivalently) to reach 4.5:1."
+    },
+    {
+      "check": "contrast",
+      "severity": "warning",
+      "message": "Text \"Footer heading\" has 3.54:1 contrast against its background, below the WCAG AA minimum for normal text.",
+      "selector": "html > body > div.footer:nth-of-type(3) > h5",
+      "measured": "3.54:1",
+      "required": "4.5:1",
+      "fix": "Change text color to #767676 (or darken/lighten equivalently) to reach 4.5:1."
+    },
+    {
+      "check": "type-scale",
+      "severity": "warning",
+      "message": "Font-size 17.2px (used on 1 element, e.g. \"html > body > div.card:nth-of-type(2)\") doesn't land on a clean type-scale step -- looks like unintentional em/rem drift rather than a deliberate size.",
+      "selector": "html > body > div.card:nth-of-type(2)",
+      "measured": "17.2px",
+      "required": "18px",
+      "fix": "Round to 18px, the nearest step on a standard type scale."
+    },
+    {
+      "check": "spacing-grid",
+      "severity": "info",
+      "message": "padding-top of 17px on 1 element (e.g. \"html > body > div.hero:nth-of-type(1)\") isn't a multiple of the page's 8px spacing unit.",
+      "selector": "html > body > div.hero:nth-of-type(1)",
+      "measured": "17px",
+      "required": "multiple of 8px (nearest: 16px)",
+      "fix": "Change padding-top to 16px to stay on the 8px grid."
+    },
+    {
+      "check": "spacing-grid",
+      "severity": "info",
+      "message": "padding-right of 23px on 1 element (e.g. \"html > body > div.hero:nth-of-type(1)\") isn't a multiple of the page's 8px spacing unit.",
+      "selector": "html > body > div.hero:nth-of-type(1)",
+      "measured": "23px",
+      "required": "multiple of 8px (nearest: 24px)",
+      "fix": "Change padding-right to 24px to stay on the 8px grid."
+    },
+    {
+      "check": "spacing-grid",
+      "severity": "info",
+      "message": "padding-bottom of 17px on 1 element (e.g. \"html > body > div.hero:nth-of-type(1)\") isn't a multiple of the page's 8px spacing unit.",
+      "selector": "html > body > div.hero:nth-of-type(1)",
+      "measured": "17px",
+      "required": "multiple of 8px (nearest: 16px)",
+      "fix": "Change padding-bottom to 16px to stay on the 8px grid."
+    },
+    {
+      "check": "spacing-grid",
+      "severity": "info",
+      "message": "padding-left of 23px on 1 element (e.g. \"html > body > div.hero:nth-of-type(1)\") isn't a multiple of the page's 8px spacing unit.",
+      "selector": "html > body > div.hero:nth-of-type(1)",
+      "measured": "23px",
+      "required": "multiple of 8px (nearest: 24px)",
+      "fix": "Change padding-left to 24px to stay on the 8px grid."
+    },
+    {
+      "check": "spacing-grid",
+      "severity": "info",
+      "message": "margin-top of 15.3px on 1 element (e.g. \"html > body > div.hero:nth-of-type(1) > h3\") isn't a multiple of the page's 8px spacing unit.",
+      "selector": "html > body > div.hero:nth-of-type(1) > h3",
+      "measured": "15.3px",
+      "required": "multiple of 8px (nearest: 16px)",
+      "fix": "Change margin-top to 16px to stay on the 8px grid."
+    },
+    {
+      "check": "spacing-grid",
+      "severity": "info",
+      "message": "margin-bottom of 15.3px on 1 element (e.g. \"html > body > div.hero:nth-of-type(1) > h3\") isn't a multiple of the page's 8px spacing unit.",
+      "selector": "html > body > div.hero:nth-of-type(1) > h3",
+      "measured": "15.3px",
+      "required": "multiple of 8px (nearest: 16px)",
+      "fix": "Change margin-bottom to 16px to stay on the 8px grid."
+    },
+    {
+      "check": "spacing-grid",
+      "severity": "info",
+      "message": "margin-top of 9px on 1 element (e.g. \"html > body > div.hero:nth-of-type(1) > p\") isn't a multiple of the page's 8px spacing unit.",
+      "selector": "html > body > div.hero:nth-of-type(1) > p",
+      "measured": "9px",
+      "required": "multiple of 8px (nearest: 8px)",
+      "fix": "Change margin-top to 8px to stay on the 8px grid."
+    },
+    {
+      "check": "spacing-grid",
+      "severity": "info",
+      "message": "margin-bottom of 13.7px on 1 element (e.g. \"html > body > div.hero:nth-of-type(1) > p\") isn't a multiple of the page's 8px spacing unit.",
+      "selector": "html > body > div.hero:nth-of-type(1) > p",
+      "measured": "13.7px",
+      "required": "multiple of 8px (nearest: 16px)",
+      "fix": "Change margin-bottom to 16px to stay on the 8px grid."
+    },
+    {
+      "check": "spacing-grid",
+      "severity": "info",
+      "message": "margin-top of 11px on 1 element (e.g. \"html > body > div.card:nth-of-type(2)\") isn't a multiple of the page's 8px spacing unit.",
+      "selector": "html > body > div.card:nth-of-type(2)",
+      "measured": "11px",
+      "required": "multiple of 8px (nearest: 8px)",
+      "fix": "Change margin-top to 8px to stay on the 8px grid."
+    },
+    {
+      "check": "spacing-grid",
+      "severity": "info",
+      "message": "margin-right of 11px on 1 element (e.g. \"html > body > div.card:nth-of-type(2)\") isn't a multiple of the page's 8px spacing unit.",
+      "selector": "html > body > div.card:nth-of-type(2)",
+      "measured": "11px",
+      "required": "multiple of 8px (nearest: 8px)",
+      "fix": "Change margin-right to 8px to stay on the 8px grid."
+    },
+    {
+      "check": "spacing-grid",
+      "severity": "info",
+      "message": "margin-bottom of 11px on 1 element (e.g. \"html > body > div.card:nth-of-type(2)\") isn't a multiple of the page's 8px spacing unit.",
+      "selector": "html > body > div.card:nth-of-type(2)",
+      "measured": "11px",
+      "required": "multiple of 8px (nearest: 8px)",
+      "fix": "Change margin-bottom to 8px to stay on the 8px grid."
+    },
+    {
+      "check": "spacing-grid",
+      "severity": "info",
+      "message": "margin-left of 11px on 1 element (e.g. \"html > body > div.card:nth-of-type(2)\") isn't a multiple of the page's 8px spacing unit.",
+      "selector": "html > body > div.card:nth-of-type(2)",
+      "measured": "11px",
+      "required": "multiple of 8px (nearest: 8px)",
+      "fix": "Change margin-left to 8px to stay on the 8px grid."
+    },
+    {
+      "check": "spacing-grid",
+      "severity": "info",
+      "message": "padding-top of 6px on 1 element (e.g. \"html > body > div.card:nth-of-type(2)\") isn't a multiple of the page's 8px spacing unit.",
+      "selector": "html > body > div.card:nth-of-type(2)",
+      "measured": "6px",
+      "required": "multiple of 8px (nearest: 8px)",
+      "fix": "Change padding-top to 8px to stay on the 8px grid."
+    },
+    {
+      "check": "spacing-grid",
+      "severity": "info",
+      "message": "padding-right of 13px on 1 element (e.g. \"html > body > div.card:nth-of-type(2)\") isn't a multiple of the page's 8px spacing unit.",
+      "selector": "html > body > div.card:nth-of-type(2)",
+      "measured": "13px",
+      "required": "multiple of 8px (nearest: 16px)",
+      "fix": "Change padding-right to 16px to stay on the 8px grid."
+    },
+    {
+      "check": "spacing-grid",
+      "severity": "info",
+      "message": "padding-bottom of 6px on 1 element (e.g. \"html > body > div.card:nth-of-type(2)\") isn't a multiple of the page's 8px spacing unit.",
+      "selector": "html > body > div.card:nth-of-type(2)",
+      "measured": "6px",
+      "required": "multiple of 8px (nearest: 8px)",
+      "fix": "Change padding-bottom to 8px to stay on the 8px grid."
+    },
+    {
+      "check": "spacing-grid",
+      "severity": "info",
+      "message": "padding-left of 13px on 1 element (e.g. \"html > body > div.card:nth-of-type(2)\") isn't a multiple of the page's 8px spacing unit.",
+      "selector": "html > body > div.card:nth-of-type(2)",
+      "measured": "13px",
+      "required": "multiple of 8px (nearest: 16px)",
+      "fix": "Change padding-left to 16px to stay on the 8px grid."
+    },
+    {
+      "check": "spacing-grid",
+      "severity": "info",
+      "message": "margin-top of 20.708px on 1 element (e.g. \"html > body > div.footer:nth-of-type(3) > h5\") isn't a multiple of the page's 8px spacing unit.",
+      "selector": "html > body > div.footer:nth-of-type(3) > h5",
+      "measured": "20.708px",
+      "required": "multiple of 8px (nearest: 24px)",
+      "fix": "Change margin-top to 24px to stay on the 8px grid."
+    },
+    {
+      "check": "spacing-grid",
+      "severity": "info",
+      "message": "margin-bottom of 20.708px on 1 element (e.g. \"html > body > div.footer:nth-of-type(3) > h5\") isn't a multiple of the page's 8px spacing unit.",
+      "selector": "html > body > div.footer:nth-of-type(3) > h5",
+      "measured": "20.708px",
+      "required": "multiple of 8px (nearest: 24px)",
+      "fix": "Change margin-bottom to 24px to stay on the 8px grid."
+    },
+    {
+      "check": "hierarchy",
+      "severity": "error",
+      "message": "No <h1> found. Every page needs exactly one top-level heading.",
+      "fix": "Add a single <h1> that names the page's primary content."
+    },
+    {
+      "check": "hierarchy",
+      "severity": "warning",
+      "message": "Heading level jumps from h3 to h5 (\"Footer heading\") -- skips h4.",
+      "selector": "html > body > div.footer:nth-of-type(3) > h5",
+      "measured": "h3 -> h5",
+      "required": "h3 -> h4",
+      "fix": "Change to h4, or insert the missing intermediate level."
+    },
+    {
+      "check": "hierarchy",
+      "severity": "warning",
+      "message": "No <main> landmark found.",
+      "fix": "Wrap the primary page content in a <main> element so assistive tech and skip-links can target it."
+    },
+    {
+      "check": "hierarchy",
+      "severity": "error",
+      "message": "<img> at \"html > body > div.footer:nth-of-type(3) > img\" has no alt attribute.",
+      "selector": "html > body > div.footer:nth-of-type(3) > img",
+      "fix": "Add a descriptive alt attribute, or alt=\"\" if the image is purely decorative."
+    }
+  ]
+}

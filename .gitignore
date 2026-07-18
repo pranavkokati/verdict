@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.verdict/
+.verdict-*/
+*.log
+.DS_Store
