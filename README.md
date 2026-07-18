@@ -199,10 +199,6 @@ On unprivileged Linux containers (some self-hosted runners, some sandboxes) `pla
 
 `mcp-server/` exposes `verdict_check`, `verdict_diff`, and `verdict_crawl` as MCP tools, so a coding agent -- Claude Code, Cursor, anything that speaks MCP -- can call Verdict directly mid-task instead of a human running the CLI and pasting output back in. This is deliberately not a bundled VLM: instead of Verdict shipping its own model to judge subjective calls, it hands its deterministic findings to whatever agent already has the reasoning and context. See `mcp-server/README.md`.
 
-## What's honestly not built yet
-
-This is v0.3. Score history, regression gating, visual diffing, multi-page crawling, the browser extension, and the MCP server are real and tested (`test/` -- 8 automated tests against actually-rendered fixtures, none mocked; the MCP server additionally verified end-to-end over the real JSON-RPC protocol against the same fixtures). Still not built: a hosted dashboard. That's the natural next step -- not implemented, not claimed as implemented.
-
 ## License
 
 MIT
