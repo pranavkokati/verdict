@@ -24,9 +24,9 @@ npx verdict-ui check ./dist/index.html
 
 Exit code is `0` on pass, `1` on fail -- so `verdict check` gates a CI pipeline the same way `eslint` or `tsc --noEmit` does.
 
-## Why this exists, and how it's different from prompt-injection "taste" tools
+## Why this exists
 
-Prompt-injection "taste" tools work by aggregating design-guideline prompt packs and injecting them into an agent's context before it writes UI code. That's a reasonable idea, but it's **open-loop**: the tool has no way to confirm the agent actually followed the guidance. You get a prompt; you don't get proof.
+Prompt-injection tools work by aggregating design-guideline prompt packs and injecting them into an agent's context before it writes UI code. That's a reasonable idea, but it's **open-loop**: the tool has no way to confirm the agent actually followed the guidance. You get a prompt; you don't get proof.
 
 Verdict is **closed-loop**. It doesn't tell the agent what to do -- it checks what the agent actually did:
 
