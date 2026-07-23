@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Verdict report -- test/fixtures/bad.html</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    margin: 0; background: #f8fafc; color: #0f172a; line-height: 1.5;
+  }
+  header {
+    padding: 32px 40px; background: #0f172a; color: white;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px;
+  }
+  header .title { font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: #94a3b8; margin: 0 0 4px; }
+  header .target { font-size: 18px; font-weight: 600; margin: 0; word-break: break-all; }
+  .score-badge {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .score-circle {
+    width: 88px; height: 88px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 700; color: white; flex-shrink: 0;
+  }
+  .verdict-pass { color: #4ade80; font-weight: 600; }
+  .verdict-fail { color: #f87171; font-weight: 600; }
+  main { max-width: 1000px; margin: 0 auto; padding: 32px 40px 80px; }
+  .summary-row { display: flex; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; }
+  .summary-card { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 20px; flex: 1; min-width: 140px; }
+  .summary-card .n { font-size: 24px; font-weight: 700; }
+  .summary-card .l { font-size: 13px; color: #64748b; }
+  .screenshot-wrap { background: white; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; margin-bottom: 32px; }
+  .screenshot-wrap img { width: 100%; display: block; }
+  .check { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; }
+  .check-header h3 { margin: 0 0 4px; font-size: 16px; display: flex; align-items: center; gap: 10px; }
+  .check-desc { margin: 0 0 12px; color: #64748b; font-size: 13px; }
+  .status { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 700; letter-spacing: 0.04em; }
+  .status-pass { background: #dcfce7; color: #166534; }
+  .status-fail { background: #fee2e2; color: #991b1b; }
+  .issue-list { list-style: none; margin: 0; padding: 0; }
+  .issue { display: flex; gap: 12px; padding: 12px 0; border-top: 1px solid #f1f5f9; }
+  .badge { color: white; font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; height: fit-content; flex-shrink: 0; }
+  .issue-message { margin: 0 0 4px; font-size: 14px; }
+  .issue-selector { background: #f1f5f9; padding: 1px 6px; border-radius: 4px; font-size: 12px; color: #475569; }
+  .issue-meta { margin: 4px 0 0; font-size: 12px; color: #64748b; }
+  .issue-fix { margin: 4px 0 0; font-size: 13px; color: #0f766e; background: #f0fdfa; padding: 6px 10px; border-radius: 6px; }
+  .clean { color: #16a34a; font-size: 14px; margin: 0; }
+  footer { text-align: center; color: #94a3b8; font-size: 12px; padding: 24px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <p class="title">Verdict Design QA Report</p>
+    <p class="target">test/fixtures/bad.html</p>
+    <p style="margin:6px 0 0;color:#cbd5e1;font-size:13px;">7/18/2026, 7:51:38 AM</p>
+  </div>
+  <div class="score-badge">
+    <div>
+      <div class="verdict-fail">FAIL</div>
+      <div style="color:#94a3b8;font-size:12px;">threshold 80</div>
+    </div>
+    <div class="score-circle" style="background:#dc2626">50</div>
+  </div>
+</header>
+<main>
+  <div class="summary-row">
+    <div class="summary-card"><div class="n" style="color:#dc2626">5</div><div class="l">errors</div></div>
+    <div class="summary-card"><div class="n" style="color:#d97706">4</div><div class="l">warnings</div></div>
+    <div class="summary-card"><div class="n" style="color:#2563eb">18</div><div class="l">info</div></div>
+    <div class="summary-card"><div class="n">4</div><div class="l">checks run</div></div>
+  </div>
+  <div class="screenshot-wrap">
+    <img src="data:image/png;base64,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+PDhOpGzLTX3myXjx0a+DhoAgFejXVuaRYRXzOnTp+vXkoYtyicvp06duocfMQIAAHa2bZ4BhvuUWdnMLtZPQC/71mIAAIB7IADzYEn0rUdnM/frK5cAAIBt5BZoAAAAWtjOb4EGAACAB5YADAAAQAsCMAAAAC0IwAAAALQgAAMAANCCAAwAAEALAjAAAAAtCMAAAAC0IAADAADQggAMAABACwIwAAAALQjAAAAAtCAAAwAA0IIADAAAQAsCMAAAAC0IwAAAALQgAAMAANCCAAwAAEALAjAAAAAtCMAAAAC0IAADAADQggAMAABACwIwAAAALQjAAAAAtCAAAwAA0IIADAAAQAsCMAAAAC0IwAAAALQgAAMAANCCAAwAAEALa6dPn/6jP/qjmaW/8Ru/sb6+PmzFpz/96ePHj588eXJLtc6fP/8Hf/AHP/IjP/ILv/ALw337kz/5k1OnTv3mb/7m9jYLAADADrBW/0l2fdOb3jQu3bt377AVN27c+Md//Mf3vve9Ww3A3yEHDhz4tV/7ta1meAAAAHawbwfgxx9//Kd/+qen37hz585TTz31v//7vy+++GLe/bmf+7knnngiy69fv/4P//APzzzzzO3bt5988sn3ve99efG7v/u7eeuf/umfnn322Q996EP//d///clPfjIVX/e6133gAx/Yv3//v//7v+fdn/mZn/nP//zPH//xH//RH/3R6XW9/PLLf/7nf/7cc88lP//yL//yY489ljY/9rGPff7zn89b3//935+J3F27dl29ejUxO6vYvXv329/+9p/4iZ9I3bNnz/71X//1xYsXv+/7vi9lqsEXXnjhz/7sz2oG+Hd+53fS/9e85jWZo07L73//+9OrlPnMZz7zz//8z7du3frJn/zJf/mXf8nWJTMPAAAA7FBLnwF+auK1r33tz//8z7/00kt/+qd/mlSZ5X/xF3/xhS984R3veMd73vOer3zlK8mZ+/bt+6mf+qm8lVibUPrlL3/5Ix/5yMGDBxM1L1269Ld/+7ffWs3ub60o6Te10ubMutLgiRMnEnQTbpNFs+TjH//4f/zHf2RJYvn//M//fOpTn8rCj370o4nE7373uzNZnb597nOfy8K//Mu/TPpNB9KNb3zjGwu2cPfu06dPJ42/613vunDhQvXn8uXLeZG3Mmv99NNPJ9VXDwEAANipvj0D/JmJep0o+Fu/9VuZL33ooYcyf5tp1bW1tb/5m79J4HzLW96Sedo3vOENlXjPnTuXYpmDzfxq/jx8+HDmWj/xiU/k9S/+4i+ur6+nQP68ceNGtfzWt771bW9723wnjh49mgZv3ryZCee0Vv1JhM60c15/9rOfzarf+c53fnAiS86cOZP1Ju4mNp8/fz45+cd+7AwsNaQAABAASURBVMey/Etf+tKVK1fm28988i/90i9lQ1Lg61//emaVk9Kz8Id/+Iczk5w4nRns/DkAAACwc307AL/xjW9MwqzXdSNxkuTx48fr9YEDB4bJfcUVL48dO1YlH3vssWEym5qoPLZ49erV/Pv7v//745IxlCboLuxEYnP+3bNnz6OPPpp0mteZsM2/v/3bv10Fsjz/Zio408KZzr1z584wuXG61pW537E/CwNwlteGVIdTMXPawySxjwsBAADY2b4dgJMwk4Gn30gsrBQa3/zmN/NvZnQrK47LT506lX8zVTsdO/fv359/P/ShDyXQjo3Xi2W3GY/P7o5SJdXf9773jQUyjfx3f/d3idCZnU4G/uM//uPhbvTNJHAVW5h+F7ZfFS9evLiiFgAAADvJ2rI33v72tz/11FOf/OQn6yus9u7d+4M/+IPJpa9//euffvrpz33uc4mdX/nKV06ePJn522vXrqXKs88+m3ff9ra3feELX/j617+eRP3Zz342y5988slhi7KuTPYmaWftn/rUp970pjedOHHi9u3ba2trX/3qV//t3/4tWTrxNf8eOnQo60qZpNzMUc9n3YW+93u/N3U//elPJ9V/7WtfGwAAANjpln7z03sm/uu//uujH/1oUuKv//qv10Tur/zKr7z5zW/++7//+wTUvPjVX/3VLHzd6173lre85Ytf/OK//uu/Jqy+//3v//znP/9Xf/VXCcbvete7NhlKp733ve99xzve8bGPfewjH/nI4cOH8zoJ/J3vfOfzzz//4Q9/+Ad+4AeylmeeeSZJ+4Mf/GC694lPfCKBPEm77o7eUKpkejmzyh//+McTre+hhwAAALy67NpkYtx5Ll++nG0/ePBg5o1/7/d+761vfesHPvCBAQAAgB1qbWjp+vXrf/iHf3jgwIGf/dmf/b//+78s+Z7v+Z4BAACAnavvDPAXv/jFD3/4w0nCR44c+aEf+qF3v/vdAwAAADtX3wAMAABAK7sHAAAAaEAABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQYAADoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgQvU2KiAAABzklEQVRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWhCAAQAAaEEABgAAoAUBGAAAgBYEYAAAAFoQgAEAAGhBAAYAAKAFARgAAIAWBGAAAABaEIABAABoQQAGAACgBQEYAACAFgRgAAAAWvh/AAAA//9DOmHSAAAABklEQVQDAM8DXvwKOeWKAAAAAElFTkSuQmCC" alt="Full-page screenshot of test/fixtures/bad.html" />
+  </div>
+  
+  <section class="check">
+    <div class="check-header">
+      <h3>Color Contrast (WCAG 2.1) <span class="status status-fail">FAIL</span></h3>
+      <p class="check-desc">Every piece of visible text must meet WCAG AA contrast against its background (4.5:1 normal text, 3:1 large text).</p>
+    </div>
+    <ul class="issue-list">
+    <li class="issue issue-error">
+      <span class="badge" style="background:#dc2626">error</span>
+      <div class="issue-body">
+        <p class="issue-message">Text &quot;Welcome&quot; has 1.43:1 contrast against its background, below the WCAG AA minimum for normal text.</p>
+        <code class="issue-selector">html &gt; body &gt; div.hero:nth-of-type(1) &gt; h3</code>
+        <p class="issue-meta">measured <strong>1.43:1</strong> -- required <strong>4.5:1</strong></p>
+        <p class="issue-fix">fix: Change text color to #6e6e6e (or darken/lighten equivalently) to reach 4.5:1.</p>
+      </div>
+    </li>
+    <li class="issue issue-error">
+      <span class="badge" style="background:#dc2626">error</span>
+      <div class="issue-body">
+        <p class="issue-message">Text &quot;This is some body copy that is very har…&quot; has 1.21:1 contrast against its background, below the WCAG AA minimum for normal text.</p>
+        <code class="issue-selector">html &gt; body &gt; div.hero:nth-of-type(1) &gt; p</code>
+        <p class="issue-meta">measured <strong>1.21:1</strong> -- required <strong>4.5:1</strong></p>
+        <p class="issue-fix">fix: Change text color to #6d6d6d (or darken/lighten equivalently) to reach 4.5:1.</p>
+      </div>
+    </li>
+    <li class="issue issue-error">
+      <span class="badge" style="background:#dc2626">error</span>
+      <div class="issue-body">
+        <p class="issue-message">Text &quot;Card content with an oddly specific fon…&quot; has 1.26:1 contrast against its background, below the WCAG AA minimum for normal text.</p>
+        <code class="issue-selector">html &gt; body &gt; div.card:nth-of-type(2)</code>
+        <p class="issue-meta">measured <strong>1.26:1</strong> -- required <strong>4.5:1</strong></p>
+        <p class="issue-fix">fix: Change text color to #757575 (or darken/lighten equivalently) to reach 4.5:1.</p>
+      </div>
+    </li>
+    <li class="issue issue-warning">
+      <span class="badge" style="background:#d97706">warning</span>
+      <div class="issue-body">
+        <p class="issue-message">Text &quot;Footer heading&quot; has 3.54:1 contrast against its background, below the WCAG AA minimum for normal text.</p>
+        <code class="issue-selector">html &gt; body &gt; div.footer:nth-of-type(3) &gt; h5</code>
+        <p class="issue-meta">measured <strong>3.54:1</strong> -- required <strong>4.5:1</strong></p>
+        <p class="issue-fix">fix: Change text color to #767676 (or darken/lighten equivalently) to reach 4.5:1.</p>
+      </div>
+    </li></ul>
+  </section>
+  <section class="check">
+    <div class="check-header">
+      <h3>Type Scale Consistency <span class="status status-fail">FAIL</span></h3>
+      <p class="check-desc">Font sizes in use should belong to a small, coherent scale rather than sprawling ad-hoc values.</p>
+    </div>
+    <ul class="issue-list">
+    <li class="issue issue-warning">
+      <span class="badge" style="background:#d97706">warning</span>
+      <div class="issue-body">
+        <p class="issue-message">Font-size 17.2px (used on 1 element, e.g. &quot;html &gt; body &gt; div.card:nth-of-type(2)&quot;) doesn't land on a clean type-scale step -- looks like unintentional em/rem drift rather than a deliberate size.</p>
+        <code class="issue-selector">html &gt; body &gt; div.card:nth-of-type(2)</code>
+        <p class="issue-meta">measured <strong>17.2px</strong> -- required <strong>18px</strong></p>
+        <p class="issue-fix">fix: Round to 18px, the nearest step on a standard type scale.</p>
+      </div>
+    </li></ul>
+  </section>
+  <section class="check">
+    <div class="check-header">
+      <h3>Spacing Grid Consistency <span class="status status-fail">FAIL</span></h3>
+      <p class="check-desc">Margins, padding, and gaps should be multiples of a consistent base unit (4px or 8px), not arbitrary values.</p>
+    </div>
+    <ul class="issue-list">
+    <li class="issue issue-info">
+      <span class="badge" style="background:#2563eb">info</span>
+      <div class="issue-body">
+        <p class="issue-message">padding-top of 17px on 1 element (e.g. &quot;html &gt; body &gt; div.hero:nth-of-type(1)&quot;) isn't a multiple of the page's 8px spacing unit.</p>
+        <code class="issue-selector">html &gt; body &gt; div.hero:nth-of-type(1)</code>
+        <p class="issue-meta">measured <strong>17px</strong> -- required <strong>multiple of 8px (nearest: 16px)</strong></p>
+        <p class="issue-fix">fix: Change padding-top to 16px to stay on the 8px grid.</p>
+      </div>
+    </li>
+    <li class="issue issue-info">
+      <span class="badge" style="background:#2563eb">info</span>
+      <div class="issue-body">
+        <p class="issue-message">padding-right of 23px on 1 element (e.g. &quot;html &gt; body &gt; div.hero:nth-of-type(1)&quot;) isn't a multiple of the page's 8px spacing unit.</p>
+        <code class="issue-selector">html &gt; body &gt; div.hero:nth-of-type(1)</code>
+        <p class="issue-meta">measured <strong>23px</strong> -- required <strong>multiple of 8px (nearest: 24px)</strong></p>
+        <p class="issue-fix">fix: Change padding-right to 24px to stay on the 8px grid.</p>
+      </div>
+    </li>
+    <li class="issue issue-info">
+      <span class="badge" style="background:#2563eb">info</span>
+      <div class="issue-body">
+        <p class="issue-message">padding-bottom of 17px on 1 element (e.g. &quot;html &gt; body &gt; div.hero:nth-of-type(1)&quot;) isn't a multiple of the page's 8px spacing unit.</p>
+        <code class="issue-selector">html &gt; body &gt; div.hero:nth-of-type(1)</code>
+        <p class="issue-meta">measured <strong>17px</strong> -- required <strong>multiple of 8px (nearest: 16px)</strong></p>
+        <p class="issue-fix">fix: Change padding-bottom to 16px to stay on the 8px grid.</p>
+      </div>
+    </li>
+    <li class="issue issue-info">
+      <span class="badge" style="background:#2563eb">info</span>
+      <div class="issue-body">
+        <p class="issue-message">padding-left of 23px on 1 element (e.g. &quot;html &gt; body &gt; div.hero:nth-of-type(1)&quot;) isn't a multiple of the page's 8px spacing unit.</p>
+        <code class="issue-selector">html &gt; body &gt; div.hero:nth-of-type(1)</code>
+        <p class="issue-meta">measured <strong>23px</strong> -- required <strong>multiple of 8px (nearest: 24px)</strong></p>
+        <p class="issue-fix">fix: Change padding-left to 24px to stay on the 8px grid.</p>
+      </div>
+    </li>
+    <li class="issue issue-info">
+      <span class="badge" style="background:#2563eb">info</span>
+      <div class="issue-body">
+        <p class="issue-message">margin-top of 15.3px on 1 element (e.g. &quot;html &gt; body &gt; div.hero:nth-of-type(1) &gt; h3&quot;) isn't a multiple of the page's 8px spacing unit.</p>
+        <code class="issue-selector">html &gt; body &gt; div.hero:nth-of-type(1) &gt; h3</code>
+        <p class="issue-meta">measured <strong>15.3px</strong> -- required <strong>multiple of 8px (nearest: 16px)</strong></p>
+        <p class="issue-fix">fix: Change margin-top to 16px to stay on the 8px grid.</p>
+      </div>
+    </li>
+    <li class="issue issue-info">
+      <span class="badge" style="background:#2563eb">info</span>
+      <div class="issue-body">
+        <p class="issue-message">margin-bottom of 15.3px on 1 element (e.g. &quot;html &gt; body &gt; div.hero:nth-of-type(1) &gt; h3&quot;) isn't a multiple of the page's 8px spacing unit.</p>
+        <code class="issue-selector">html &gt; body &gt; div.hero:nth-of-type(1) &gt; h3</code>
+        <p class="issue-meta">measured <strong>15.3px</strong> -- required <strong>multiple of 8px (nearest: 16px)</strong></p>
+        <p class="issue-fix">fix: Change margin-bottom to 16px to stay on the 8px grid.</p>
+      </div>
+    </li>
+    <li class="issue issue-info">
+      <span class="badge" style="background:#2563eb">info</span>
+      <div class="issue-body">
+        <p class="issue-message">margin-top of 9px on 1 element (e.g. &quot;html &gt; body &gt; div.hero:nth-of-type(1) &gt; p&quot;) isn't a multiple of the page's 8px spacing unit.</p>
+        <code class="issue-selector">html &gt; body &gt; div.hero:nth-of-type(1) &gt; p</code>
+        <p class="issue-meta">measured <strong>9px</strong> -- required <strong>multiple of 8px (nearest: 8px)</strong></p>
+        <p class="issue-fix">fix: Change margin-top to 8px to stay on the 8px grid.</p>
+      </div>
+    </li>
+    <li class="issue issue-info">
+      <span class="badge" style="background:#2563eb">info</span>
+      <div class="issue-body">
+        <p class="issue-message">margin-bottom of 13.7px on 1 element (e.g. &quot;html &gt; body &gt; div.hero:nth-of-type(1) &gt; p&quot;) isn't a multiple of the page's 8px spacing unit.</p>
+        <code class="issue-selector">html &gt; body &gt; div.hero:nth-of-type(1) &gt; p</code>
+        <p class="issue-meta">measured <strong>13.7px</strong> -- required <strong>multiple of 8px (nearest: 16px)</strong></p>
+        <p class="issue-fix">fix: Change margin-bottom to 16px to stay on the 8px grid.</p>
+      </div>
+    </li>
+    <li class="issue issue-info">
+      <span class="badge" style="background:#2563eb">info</span>
+      <div class="issue-body">
+        <p class="issue-message">margin-top of 11px on 1 element (e.g. &quot;html &gt; body &gt; div.card:nth-of-type(2)&quot;) isn't a multiple of the page's 8px spacing unit.</p>
+        <code class="issue-selector">html &gt; body &gt; div.card:nth-of-type(2)</code>
+        <p class="issue-meta">measured <strong>11px</strong> -- required <strong>multiple of 8px (nearest: 8px)</strong></p>
+        <p class="issue-fix">fix: Change margin-top to 8px to stay on the 8px grid.</p>
+      </div>
+    </li>
+    <li class="issue issue-info">
+      <span class="badge" style="background:#2563eb">info</span>
+      <div class="issue-body">
+        <p class="issue-message">margin-right of 11px on 1 element (e.g. &quot;html &gt; body &gt; div.card:nth-of-type(2)&quot;) isn't a multiple of the page's 8px spacing unit.</p>
+        <code class="issue-selector">html &gt; body &gt; div.card:nth-of-type(2)</code>
+        <p class="issue-meta">measured <strong>11px</strong> -- required <strong>multiple of 8px (nearest: 8px)</strong></p>
+        <p class="issue-fix">fix: Change margin-right to 8px to stay on the 8px grid.</p>
+      </div>
+    </li>
+    <li class="issue issue-info">
+      <span class="badge" style="background:#2563eb">info</span>
+      <div class="issue-body">
+        <p class="issue-message">margin-bottom of 11px on 1 element (e.g. &quot;html &gt; body &gt; div.card:nth-of-type(2)&quot;) isn't a multiple of the page's 8px spacing unit.</p>
+        <code class="issue-selector">html &gt; body &gt; div.card:nth-of-type(2)</code>
+        <p class="issue-meta">measured <strong>11px</strong> -- required <strong>multiple of 8px (nearest: 8px)</strong></p>
+        <p class="issue-fix">fix: Change margin-bottom to 8px to stay on the 8px grid.</p>
+      </div>
+    </li>
+    <li class="issue issue-info">
+      <span class="badge" style="background:#2563eb">info</span>
+      <div class="issue-body">
+        <p class="issue-message">margin-left of 11px on 1 element (e.g. &quot;html &gt; body &gt; div.card:nth-of-type(2)&quot;) isn't a multiple of the page's 8px spacing unit.</p>
+        <code class="issue-selector">html &gt; body &gt; div.card:nth-of-type(2)</code>
+        <p class="issue-meta">measured <strong>11px</strong> -- required <strong>multiple of 8px (nearest: 8px)</strong></p>
+        <p class="issue-fix">fix: Change margin-left to 8px to stay on the 8px grid.</p>
+      </div>
+    </li>
+    <li class="issue issue-info">
+      <span class="badge" style="background:#2563eb">info</span>
+      <div class="issue-body">
+        <p class="issue-message">padding-top of 6px on 1 element (e.g. &quot;html &gt; body &gt; div.card:nth-of-type(2)&quot;) isn't a multiple of the page's 8px spacing unit.</p>
+        <code class="issue-selector">html &gt; body &gt; div.card:nth-of-type(2)</code>
+        <p class="issue-meta">measured <strong>6px</strong> -- required <strong>multiple of 8px (nearest: 8px)</strong></p>
+        <p class="issue-fix">fix: Change padding-top to 8px to stay on the 8px grid.</p>
+      </div>
+    </li>
+    <li class="issue issue-info">
+      <span class="badge" style="background:#2563eb">info</span>
+      <div class="issue-body">
+        <p class="issue-message">padding-right of 13px on 1 element (e.g. &quot;html &gt; body &gt; div.card:nth-of-type(2)&quot;) isn't a multiple of the page's 8px spacing unit.</p>
+        <code class="issue-selector">html &gt; body &gt; div.card:nth-of-type(2)</code>
+        <p class="issue-meta">measured <strong>13px</strong> -- required <strong>multiple of 8px (nearest: 16px)</strong></p>
+        <p class="issue-fix">fix: Change padding-right to 16px to stay on the 8px grid.</p>
+      </div>
+    </li>
+    <li class="issue issue-info">
+      <span class="badge" style="background:#2563eb">info</span>
+      <div class="issue-body">
+        <p class="issue-message">padding-bottom of 6px on 1 element (e.g. &quot;html &gt; body &gt; div.card:nth-of-type(2)&quot;) isn't a multiple of the page's 8px spacing unit.</p>
+        <code class="issue-selector">html &gt; body &gt; div.card:nth-of-type(2)</code>
+        <p class="issue-meta">measured <strong>6px</strong> -- required <strong>multiple of 8px (nearest: 8px)</strong></p>
+        <p class="issue-fix">fix: Change padding-bottom to 8px to stay on the 8px grid.</p>
+      </div>
+    </li>
+    <li class="issue issue-info">
+      <span class="badge" style="background:#2563eb">info</span>
+      <div class="issue-body">
+        <p class="issue-message">padding-left of 13px on 1 element (e.g. &quot;html &gt; body &gt; div.card:nth-of-type(2)&quot;) isn't a multiple of the page's 8px spacing unit.</p>
+        <code class="issue-selector">html &gt; body &gt; div.card:nth-of-type(2)</code>
+        <p class="issue-meta">measured <strong>13px</strong> -- required <strong>multiple of 8px (nearest: 16px)</strong></p>
+        <p class="issue-fix">fix: Change padding-left to 16px to stay on the 8px grid.</p>
+      </div>
+    </li>
+    <li class="issue issue-info">
+      <span class="badge" style="background:#2563eb">info</span>
+      <div class="issue-body">
+        <p class="issue-message">margin-top of 20.708px on 1 element (e.g. &quot;html &gt; body &gt; div.footer:nth-of-type(3) &gt; h5&quot;) isn't a multiple of the page's 8px spacing unit.</p>
+        <code class="issue-selector">html &gt; body &gt; div.footer:nth-of-type(3) &gt; h5</code>
+        <p class="issue-meta">measured <strong>20.708px</strong> -- required <strong>multiple of 8px (nearest: 24px)</strong></p>
+        <p class="issue-fix">fix: Change margin-top to 24px to stay on the 8px grid.</p>
+      </div>
+    </li>
+    <li class="issue issue-info">
+      <span class="badge" style="background:#2563eb">info</span>
+      <div class="issue-body">
+        <p class="issue-message">margin-bottom of 20.708px on 1 element (e.g. &quot;html &gt; body &gt; div.footer:nth-of-type(3) &gt; h5&quot;) isn't a multiple of the page's 8px spacing unit.</p>
+        <code class="issue-selector">html &gt; body &gt; div.footer:nth-of-type(3) &gt; h5</code>
+        <p class="issue-meta">measured <strong>20.708px</strong> -- required <strong>multiple of 8px (nearest: 24px)</strong></p>
+        <p class="issue-fix">fix: Change margin-bottom to 24px to stay on the 8px grid.</p>
+      </div>
+    </li></ul>
+  </section>
+  <section class="check">
+    <div class="check-header">
+      <h3>Heading &amp; Landmark Hierarchy <span class="status status-fail">FAIL</span></h3>
+      <p class="check-desc">Headings should form a single, unbroken outline (one h1, no skipped levels) and the page should expose landmark regions and image alt text.</p>
+    </div>
+    <ul class="issue-list">
+    <li class="issue issue-error">
+      <span class="badge" style="background:#dc2626">error</span>
+      <div class="issue-body">
+        <p class="issue-message">No &lt;h1&gt; found. Every page needs exactly one top-level heading.</p>
+        
+        
+        <p class="issue-fix">fix: Add a single &lt;h1&gt; that names the page's primary content.</p>
+      </div>
+    </li>
+    <li class="issue issue-warning">
+      <span class="badge" style="background:#d97706">warning</span>
+      <div class="issue-body">
+        <p class="issue-message">Heading level jumps from h3 to h5 (&quot;Footer heading&quot;) -- skips h4.</p>
+        <code class="issue-selector">html &gt; body &gt; div.footer:nth-of-type(3) &gt; h5</code>
+        <p class="issue-meta">measured <strong>h3 -&gt; h5</strong> -- required <strong>h3 -&gt; h4</strong></p>
+        <p class="issue-fix">fix: Change to h4, or insert the missing intermediate level.</p>
+      </div>
+    </li>
+    <li class="issue issue-warning">
+      <span class="badge" style="background:#d97706">warning</span>
+      <div class="issue-body">
+        <p class="issue-message">No &lt;main&gt; landmark found.</p>
+        
+        
+        <p class="issue-fix">fix: Wrap the primary page content in a &lt;main&gt; element so assistive tech and skip-links can target it.</p>
+      </div>
+    </li>
+    <li class="issue issue-error">
+      <span class="badge" style="background:#dc2626">error</span>
+      <div class="issue-body">
+        <p class="issue-message">&lt;img&gt; at &quot;html &gt; body &gt; div.footer:nth-of-type(3) &gt; img&quot; has no alt attribute.</p>
+        <code class="issue-selector">html &gt; body &gt; div.footer:nth-of-type(3) &gt; img</code>
+        
+        <p class="issue-fix">fix: Add a descriptive alt attribute, or alt=&quot;&quot; if the image is purely decorative.</p>
+      </div>
+    </li></ul>
+  </section>
+</main>
+<footer>Generated by Verdict -- design QA for AI-generated interfaces.</footer>
+</body>
+</html>

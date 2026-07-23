@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Verdict: Design QA for AI-generated interfaces</title>
+<meta name="description" content="Verdict renders your UI in a real browser and checks it against WCAG contrast, type scale, spacing, and heading rules. Get a score, a fix list, and a CI exit code." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%230f172a'%3E%3Cpath d='M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z'/%3E%3Cpath d='M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z' transform='rotate(45 50 50)'/%3E%3Cpath d='M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z' transform='rotate(90 50 50)'/%3E%3Cpath d='M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z' transform='rotate(135 50 50)'/%3E%3Cpath d='M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z' transform='rotate(180 50 50)'/%3E%3Cpath d='M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z' transform='rotate(225 50 50)'/%3E%3Cpath d='M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z' transform='rotate(270 50 50)'/%3E%3Cpath d='M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z' transform='rotate(315 50 50)'/%3E%3C/g%3E%3C/svg%3E" />
+<style>
+  :root {
+    --ink: #0f1115;
+    --ink-2: #333844;
+    --ink-3: #6b7280;
+    --line: #e5e7eb;
+    --line-2: #eceef1;
+    --bg: #ffffff;
+    --bg-soft: #fafafa;
+    --panel: #0b0c0f;
+    --panel-2: #16181d;
+    --good: #16a34a;
+    --bad: #dc2626;
+    --radius: 12px;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; font-family: var(--sans); color: var(--ink); background: var(--bg);
+    line-height: 1.5; -webkit-font-smoothing: antialiased; font-size: 16px;
+  }
+  a { color: inherit; }
+  img, svg { display: block; }
+  button { font-family: inherit; cursor: pointer; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- nav ---------- */
+  .nav-spacer { height: 84px; }
+  nav.top {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; justify-content: center; padding: 16px 20px 0;
+    pointer-events: none;
+  }
+  .nav-inner {
+    pointer-events: auto;
+    width: 100%; max-width: 1120px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px 10px 16px;
+    background: rgba(255,255,255,0.72);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 1px 2px rgba(15,17,21,0.04);
+    transition: box-shadow .2s ease, background .2s ease;
+  }
+  nav.top.is-scrolled .nav-inner {
+    box-shadow: 0 8px 24px -8px rgba(15,17,21,0.16);
+    background: rgba(255,255,255,0.88);
+  }
+  .brand { display: flex; align-items: center; gap: 9px; font-weight: 600; font-size: 15px; letter-spacing: -0.01em; text-decoration: none; color: var(--ink); }
+  .brand .mark { width: 22px; height: 22px; flex-shrink: 0; }
+  .brand .mark path { fill: var(--ink); }
+
+  .navlinks { display: flex; align-items: center; gap: 28px; font-size: 14px; color: var(--ink-3); margin-left: 8px; list-style: none; padding: 0; }
+  .navlinks a { text-decoration: none; }
+  .navlinks a:hover { color: var(--ink); }
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    padding: 9px 16px; border-radius: 999px; font-size: 13.5px; font-weight: 600;
+    text-decoration: none; border: 1px solid transparent; white-space: nowrap;
+    transition: background .15s ease, border-color .15s ease, opacity .15s ease, transform .15s ease;
+  }
+  .btn-dark { background: var(--panel); color: white; }
+  .btn-dark:hover { opacity: 0.88; }
+  .btn-outline { background: transparent; color: var(--ink); border-color: var(--line); }
+  .btn-outline:hover { border-color: #c7cbd1; background: var(--bg-soft); }
+  .btn-lg { padding: 14px 24px; font-size: 14.5px; border-radius: 10px; }
+
+  /* ---------- hero (open-saas pattern: gradient blobs + centered copy) ---------- */
+  .hero { position: relative; padding: 88px 0 0; overflow: hidden; }
+  .hero-glow-top {
+    position: absolute; top: -12%; right: -8%; width: 60%; aspect-ratio: 1020/880; z-index: -1;
+    background: linear-gradient(to top right, #a78bfa, #fbbf24);
+    opacity: 0.10; filter: blur(64px);
+    clip-path: polygon(80% 20%, 90% 55%, 50% 100%, 70% 30%, 20% 50%, 50% 0);
+  }
+  .hero-glow-bottom {
+    position: absolute; top: 420px; left: -14%; width: 70%; aspect-ratio: 1020/880; z-index: -1;
+    background: linear-gradient(to bottom right, #fbbf24, #a78bfa);
+    opacity: 0.09; filter: blur(64px);
+    clip-path: ellipse(80% 30% at 80% 50%);
+  }
+  .hero .inner { text-align: center; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600;
+    color: var(--ink-3); background: var(--bg-soft); border: 1px solid var(--line);
+    padding: 6px 13px 6px 10px; border-radius: 999px; margin-bottom: 24px;
+  }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--good); }
+  h1.headline {
+    font-size: 56px; line-height: 1.08; letter-spacing: -0.032em; font-weight: 700;
+    margin: 0 0 18px; color: var(--ink);
+  }
+  .sub {
+    font-size: 18px; color: var(--ink-3); max-width: 580px; margin: 0 auto 34px; line-height: 1.55;
+  }
+
+  /* command bar, the primary hero CTA */
+  .cmdbar {
+    display: flex; align-items: stretch; gap: 10px; justify-content: center;
+    max-width: 620px; margin: 0 auto 16px; flex-wrap: wrap;
+  }
+  .cmdbox {
+    flex: 1 1 340px; display: flex; align-items: center; gap: 10px;
+    background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
+    padding: 0 16px; height: 48px; font-family: var(--mono); font-size: 14px; color: var(--ink-2);
+    box-shadow: 0 1px 2px rgba(15,17,21,0.03); white-space: nowrap; overflow-x: auto;
+  }
+  .cmdbox .prompt { color: #9ca3af; }
+  .cmdbox button.copy {
+    margin-left: auto; background: none; border: none; color: #9ca3af; font-size: 12px;
+    font-family: var(--sans); padding: 6px 0; flex-shrink: 0;
+  }
+  .cmdbox button.copy:hover { color: var(--ink-2); }
+  .proof-row { font-size: 13.5px; color: #9ca3af; margin: 0 0 8px; }
+
+  /* ---------- output panel: the "screenshot" under the hero copy ---------- */
+  .panel-wrap { padding: 56px 0 0; position: relative; }
+  .panel-frame {
+    max-width: 940px; margin: 0 auto; border-radius: 16px; padding: 6px;
+    background: var(--bg); box-shadow: 0 30px 60px -30px rgba(15,17,21,0.28);
+    border: 1px solid var(--line);
+  }
+  .files {
+    display: grid; grid-template-columns: 200px 1fr;
+    border-radius: 12px; overflow: hidden; background: var(--panel);
+  }
+  .files-side { background: var(--panel-2); padding: 14px 10px; border-right: 1px solid #23262e; }
+  .files-side .label { font-family: var(--mono); font-size: 11px; color: #6b7280; padding: 6px 10px 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .file-btn {
+    display: flex; align-items: center; gap: 8px; width: 100%; text-align: left;
+    background: none; border: none; border-radius: 8px; padding: 9px 10px;
+    font-family: var(--mono); font-size: 12.5px; color: #9199a6;
+  }
+  .file-btn:hover { background: #1c1f26; color: #e5e7eb; }
+  .file-btn.active { background: #1c1f26; color: white; font-weight: 600; }
+  .file-btn .dot2 { width: 6px; height: 6px; border-radius: 50%; background: #3a3f4a; flex-shrink: 0; }
+  .file-btn.active .dot2 { background: #4ade80; }
+
+  .files-main { display: flex; flex-direction: column; }
+  .term-bar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid #23262e; }
+  .term-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .term-dot.r { background: #ff5f57; }
+  .term-dot.y { background: #febc2e; }
+  .term-dot.g { background: #28c840; }
+  .term-path { margin-left: 10px; font-family: var(--mono); font-size: 12px; color: #6b7280; }
+
+  .file-pane { display: none; padding: 22px 24px; font-family: var(--mono); font-size: 13px; line-height: 1.8; color: #d1d5db; overflow-x: auto; max-height: 440px; overflow-y: auto; white-space: pre; }
+  .file-pane.active { display: block; }
+  .tok-key { color: #93c5fd; }
+  .tok-str { color: #86efac; }
+  .tok-num { color: #fcd34d; }
+  .tok-bool { color: #c4b5fd; }
+  .tok-punc { color: #565b66; }
+  .tok-comment { color: #6b7280; font-style: italic; }
+  .term-dim { color: #6b7280; }
+  .caption { margin: 14px auto 0; max-width: 940px; text-align: center; font-size: 12.5px; color: var(--ink-3); }
+  .caption code { font-family: var(--mono); background: var(--bg-soft); border: 1px solid var(--line); padding: 1px 6px; border-radius: 5px; color: var(--ink-2); }
+
+  /* ---------- compatibility strip ---------- */
+  .compat { padding: 76px 0 0; }
+  .compat h2 { text-align: center; font-size: 13px; font-weight: 600; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 28px; }
+  .compat-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; max-width: 760px; margin: 0 auto; }
+  .compat-pill {
+    font-family: var(--mono); font-size: 13px; color: var(--ink-3); background: var(--bg-soft);
+    border: 1px solid var(--line); padding: 8px 16px; border-radius: 999px;
+    transition: color .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .compat-pill:hover { color: var(--ink); border-color: #c7cbd1; background: var(--bg); }
+
+  /* ---------- sections ---------- */
+  section { padding: 96px 0; }
+  .kicker { font-size: 12.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 12px; text-align: center; }
+  h2.title { font-size: 32px; letter-spacing: -0.025em; font-weight: 700; text-align: center; margin: 0 0 14px; }
+  p.lede { font-size: 16px; color: var(--ink-3); text-align: center; max-width: 580px; margin: 0 auto 52px; line-height: 1.6; }
+
+  /* ---------- bento features grid ---------- */
+  .bento {
+    max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: minmax(150px, auto); gap: 14px;
+  }
+  .bcard {
+    grid-column: span 1; border: 1px solid var(--line); border-radius: 14px; padding: 22px;
+    display: flex; flex-direction: column; justify-content: flex-start; gap: 8px;
+    transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease; background: var(--bg);
+  }
+  .bcard:hover { box-shadow: 0 16px 32px -18px rgba(15,17,21,0.18); transform: translateY(-2px); border-color: #d7dae0; }
+  .bcard.span-2 { grid-column: span 2; }
+  .bcard.dark { background: var(--panel); border-color: #23262e; color: #e5e7eb; }
+  .bcard .icon { font-family: var(--mono); font-size: 11px; color: #9ca3af; background: var(--bg-soft); border: 1px solid var(--line); width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+  .bcard.dark .icon { background: #1c1f26; border-color: #2b2f38; color: #9ca3af; }
+  .bcard h3 { font-size: 15px; margin: 0; letter-spacing: -0.01em; }
+  .bcard p { font-size: 13.5px; color: var(--ink-3); margin: 0; line-height: 1.55; }
+  .bcard.dark p { color: #9199a6; }
+
+  .diff-illustration { display: flex; align-items: center; gap: 14px; margin: 6px 0 2px; font-family: var(--mono); }
+  .diff-illustration .s { font-size: 26px; font-weight: 700; color: #6b7280; }
+  .diff-illustration .s.after { color: white; }
+  .diff-illustration .arrow { color: #4ade80; }
+  .diff-illustration .delta { font-size: 11.5px; font-weight: 700; color: #4ade80; background: rgba(74,222,128,0.14); padding: 2px 8px; border-radius: 999px; }
+
+  /* ---------- FAQ accordion ---------- */
+  .faq { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+  .faq-item { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .faq-q {
+    width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    background: var(--bg); border: none; padding: 18px 20px; text-align: left;
+    font-size: 15px; font-weight: 600; color: var(--ink); transition: background .15s ease;
+  }
+  .faq-q:hover { background: var(--bg-soft); }
+  .faq-chev { flex-shrink: 0; width: 18px; height: 18px; transition: transform .2s ease; color: var(--ink-3); }
+  .faq-item.open .faq-chev { transform: rotate(45deg); }
+  .faq-a { max-height: 0; overflow: hidden; transition: max-height .25s ease; }
+  .faq-a-inner { padding: 0 20px 18px; font-size: 14px; color: var(--ink-3); line-height: 1.65; }
+  .faq-a-inner code { font-family: var(--mono); background: var(--bg-soft); border: 1px solid var(--line); padding: 1px 6px; border-radius: 5px; color: var(--ink-2); font-size: 13px; }
+
+  /* ---------- closing cta ---------- */
+  .closing { text-align: center; padding: 96px 0; border-top: 1px solid var(--line-2); }
+  .closing h2 { font-size: 34px; font-weight: 700; letter-spacing: -0.025em; margin: 0 0 28px; }
+
+  /* ---------- footer (open-saas two-column pattern) ---------- */
+  footer { border-top: 1px solid var(--line-2); padding: 56px 0 40px; }
+  .footer-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 40px; }
+  .footer-cols { display: flex; gap: 56px; }
+  .footer-col h4 { font-size: 12.5px; font-weight: 600; color: var(--ink); margin: 0 0 14px; }
+  .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col a { font-size: 13.5px; color: var(--ink-3); text-decoration: none; }
+  .footer-col a:hover { color: var(--ink); }
+  .footer-bottom { margin-top: 44px; padding-top: 22px; border-top: 1px solid var(--line-2); font-size: 13px; color: #9ca3af; }
+
+  @media (max-width: 760px) {
+    .wrap { padding: 0 18px; }
+    .nav-inner { border-radius: 20px; padding: 10px 14px; }
+    .navlinks { display: none; }
+    h1.headline { font-size: 32px; }
+    .sub { font-size: 15.5px; }
+    .files { grid-template-columns: 1fr; }
+    .files-side { border-right: none; border-bottom: 1px solid #23262e; display: flex; overflow-x: auto; gap: 4px; }
+    .files-side .label { display: none; }
+    .file-btn { flex-shrink: 0; }
+    .cmdbar { flex-direction: column; }
+    section { padding: 60px 0; }
+    h2.title { font-size: 26px; }
+    .bento { grid-template-columns: repeat(2, 1fr); }
+    .bcard.span-2 { grid-column: span 2; }
+    .closing { padding: 64px 0; }
+    .closing h2 { font-size: 26px; }
+    .hero { padding-top: 56px; }
+    .footer-top { flex-direction: column; gap: 28px; }
+    .footer-cols { gap: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="top" id="topnav">
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <svg class="mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <g>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(0 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(45 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(90 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(135 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(180 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(225 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(270 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(315 50 50)"/>
+        </g>
+      </svg>
+      Verdict
+    </a>
+    <ul class="navlinks">
+      <li><a href="#output">Output</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <div class="nav-right">
+      <a class="btn btn-outline" href="https://github.com/pranavkokati/verdict">GitHub</a>
+      <a class="btn btn-dark" href="#install">Get started</a>
+    </div>
+  </div>
+</nav>
+<div class="nav-spacer"></div>
+
+<div id="top" class="hero">
+  <div class="hero-glow-top"></div>
+  <div class="hero-glow-bottom"></div>
+  <div class="wrap inner">
+    <h1 class="headline">Design QA for interfaces<br />built by AI agents.</h1>
+    <p class="sub">Verdict renders your UI in a real browser and checks it against WCAG contrast, type scale, spacing, and heading rules. You get a score, a fix list, and an exit code your CI can enforce.</p>
+    <div class="cmdbar">
+      <div class="cmdbox">
+        <span class="prompt">$</span> npx verdict-ui check ./dist
+        <button class="copy" type="button" onclick="copyCmd(this)">Copy</button>
+      </div>
+      <a class="btn btn-dark btn-lg" href="#install">Get started</a>
+    </div>
+    <p class="proof-row">npm install verdict-ui, or <a href="https://github.com/pranavkokati/verdict">view the source on GitHub</a></p>
+  </div>
+</div>
+
+<div id="output" class="panel-wrap">
+  <div class="wrap">
+    <div class="panel-frame">
+      <div class="files">
+        <div class="files-side">
+          <div class="label">.verdict/</div>
+          <button class="file-btn active" data-file="terminal"><span class="dot2"></span>verdict check</button>
+          <button class="file-btn" data-file="diff"><span class="dot2"></span>verdict diff</button>
+          <button class="file-btn" data-file="json"><span class="dot2"></span>result.json</button>
+          <button class="file-btn" data-file="yaml"><span class="dot2"></span>verdict.yml</button>
+          <button class="file-btn" data-file="jsonl"><span class="dot2"></span>history.jsonl</button>
+        </div>
+        <div class="files-main">
+          <div class="term-bar">
+            <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
+            <span class="term-path" id="fileHead">~/dist $ npx verdict-ui check test/fixtures/bad.html</span>
+          </div>
+
+          <div class="file-pane active" data-pane="terminal">────────────────────────────────────────────────
+  Verdict  50/100  (threshold 80)  FAIL
+────────────────────────────────────────────────
+  <span class="tok-key">✗</span> Color Contrast (WCAG 2.1)  (4 issues)
+  <span class="tok-key">✗</span> Type Scale Consistency  (1 issue)
+  <span class="tok-key">✗</span> Spacing Grid Consistency  (18 issues)
+  <span class="tok-key">✗</span> Heading &amp; Landmark Hierarchy  (4 issues)
+────────────────────────────────────────────────
+  5 error(s), 4 warning(s), 18 info
+  Report: .verdict/report.html
+────────────────────────────────────────────────</div>
+
+          <div class="file-pane" data-pane="diff">────────────────────────────────────────────────
+  Verdict diff  50 -&gt; 98  (+48)  IMPROVED
+────────────────────────────────────────────────
+  pixels changed: 0.4%
+  issues: 27 fixed, 2 introduced, 0 persisting
+  report: .verdict/diff/diff.html
+────────────────────────────────────────────────</div>
+
+          <div class="file-pane" data-pane="json">{
+  <span class="tok-key">"score"</span><span class="tok-punc">:</span> <span class="tok-num">50</span><span class="tok-punc">,</span>
+  <span class="tok-key">"threshold"</span><span class="tok-punc">:</span> <span class="tok-num">80</span><span class="tok-punc">,</span>
+  <span class="tok-key">"passed"</span><span class="tok-punc">:</span> <span class="tok-bool">false</span><span class="tok-punc">,</span>
+  <span class="tok-key">"target"</span><span class="tok-punc">:</span> <span class="tok-str">"test/fixtures/bad.html"</span><span class="tok-punc">,</span>
+  <span class="tok-key">"timestamp"</span><span class="tok-punc">:</span> <span class="tok-str">"2026-07-18T17:36:46.630Z"</span><span class="tok-punc">,</span>
+  <span class="tok-key">"issues"</span><span class="tok-punc">:</span> [
+    {
+      <span class="tok-key">"check"</span><span class="tok-punc">:</span> <span class="tok-str">"contrast"</span><span class="tok-punc">,</span>
+      <span class="tok-key">"severity"</span><span class="tok-punc">:</span> <span class="tok-str">"error"</span><span class="tok-punc">,</span>
+      <span class="tok-key">"message"</span><span class="tok-punc">:</span> <span class="tok-str">"Text \"Welcome\" has 1.43:1 contrast against its background, below the WCAG AA minimum for normal text."</span><span class="tok-punc">,</span>
+      <span class="tok-key">"selector"</span><span class="tok-punc">:</span> <span class="tok-str">"html &gt; body &gt; div.hero:nth-of-type(1) &gt; h3"</span><span class="tok-punc">,</span>
+      <span class="tok-key">"measured"</span><span class="tok-punc">:</span> <span class="tok-str">"1.43:1"</span><span class="tok-punc">,</span>
+      <span class="tok-key">"required"</span><span class="tok-punc">:</span> <span class="tok-str">"4.5:1"</span><span class="tok-punc">,</span>
+      <span class="tok-key">"fix"</span><span class="tok-punc">:</span> <span class="tok-str">"Change text color to #6e6e6e (or darken/lighten equivalently) to reach 4.5:1."</span>
+    }<span class="tok-punc">,</span>
+    {
+      <span class="tok-key">"check"</span><span class="tok-punc">:</span> <span class="tok-str">"hierarchy"</span><span class="tok-punc">,</span>
+      <span class="tok-key">"severity"</span><span class="tok-punc">:</span> <span class="tok-str">"error"</span><span class="tok-punc">,</span>
+      <span class="tok-key">"message"</span><span class="tok-punc">:</span> <span class="tok-str">"No &lt;h1&gt; found. Every page needs exactly one top-level heading."</span><span class="tok-punc">,</span>
+      <span class="tok-key">"fix"</span><span class="tok-punc">:</span> <span class="tok-str">"Add a single &lt;h1&gt; that names the page's primary content."</span>
+    }<span class="tok-punc">,</span>
+    {
+      <span class="tok-key">"check"</span><span class="tok-punc">:</span> <span class="tok-str">"hierarchy"</span><span class="tok-punc">,</span>
+      <span class="tok-key">"severity"</span><span class="tok-punc">:</span> <span class="tok-str">"error"</span><span class="tok-punc">,</span>
+      <span class="tok-key">"message"</span><span class="tok-punc">:</span> <span class="tok-str">"&lt;img&gt; at \"html &gt; body &gt; div.footer:nth-of-type(3) &gt; img\" has no alt attribute."</span><span class="tok-punc">,</span>
+      <span class="tok-key">"fix"</span><span class="tok-punc">:</span> <span class="tok-str">"Add a descriptive alt attribute, or alt=\"\" if the image is purely decorative."</span>
+    }<span class="tok-punc">,</span>
+    <span class="term-dim">// 24 more issues, same shape, in the full file</span>
+  ]
+}</div>
+
+          <div class="file-pane" data-pane="yaml"><span class="tok-comment"># .github/workflows/verdict.yml</span>
+<span class="tok-key">name</span><span class="tok-punc">:</span> <span class="tok-str">Verdict design QA</span>
+<span class="tok-key">on</span><span class="tok-punc">:</span>
+  <span class="tok-key">pull_request</span><span class="tok-punc">:</span>
+    <span class="tok-key">paths</span><span class="tok-punc">:</span> [<span class="tok-str">"src/**"</span>, <span class="tok-str">"public/**"</span>]
+
+<span class="tok-key">jobs</span><span class="tok-punc">:</span>
+  <span class="tok-key">verdict</span><span class="tok-punc">:</span>
+    <span class="tok-key">runs-on</span><span class="tok-punc">:</span> <span class="tok-str">ubuntu-latest</span>
+    <span class="tok-key">steps</span><span class="tok-punc">:</span>
+      - <span class="tok-key">uses</span><span class="tok-punc">:</span> <span class="tok-str">actions/checkout@v4</span>
+      - <span class="tok-key">run</span><span class="tok-punc">:</span> <span class="tok-str">npm ci &amp;&amp; npm run build</span>
+      - <span class="tok-key">run</span><span class="tok-punc">:</span> <span class="tok-str">npx playwright install --with-deps chromium</span>
+      - <span class="tok-key">uses</span><span class="tok-punc">:</span> <span class="tok-str">actions/cache@v4</span>
+        <span class="tok-key">with</span><span class="tok-punc">:</span> {<span class="tok-key">path</span><span class="tok-punc">:</span> <span class="tok-str">.verdict</span>}
+      - <span class="tok-key">run</span><span class="tok-punc">:</span> <span class="tok-str">npx verdict check ./dist/index.html --threshold 90</span></div>
+
+          <div class="file-pane" data-pane="jsonl">{<span class="tok-key">"timestamp"</span><span class="tok-punc">:</span><span class="tok-str">"2026-07-18T17:36:29.779Z"</span><span class="tok-punc">,</span> <span class="tok-key">"target"</span><span class="tok-punc">:</span><span class="tok-str">"test/fixtures/bad.html"</span><span class="tok-punc">,</span> <span class="tok-key">"score"</span><span class="tok-punc">:</span><span class="tok-num">50</span><span class="tok-punc">,</span> <span class="tok-key">"threshold"</span><span class="tok-punc">:</span><span class="tok-num">80</span><span class="tok-punc">,</span> <span class="tok-key">"passed"</span><span class="tok-punc">:</span><span class="tok-bool">false</span>}
+{<span class="tok-key">"timestamp"</span><span class="tok-punc">:</span><span class="tok-str">"2026-07-18T17:36:46.630Z"</span><span class="tok-punc">,</span> <span class="tok-key">"target"</span><span class="tok-punc">:</span><span class="tok-str">"test/fixtures/bad.html"</span><span class="tok-punc">,</span> <span class="tok-key">"score"</span><span class="tok-punc">:</span><span class="tok-num">50</span><span class="tok-punc">,</span> <span class="tok-key">"threshold"</span><span class="tok-punc">:</span><span class="tok-num">80</span><span class="tok-punc">,</span> <span class="tok-key">"passed"</span><span class="tok-punc">:</span><span class="tok-bool">false</span>}
+{<span class="tok-key">"timestamp"</span><span class="tok-punc">:</span><span class="tok-str">"2026-07-18T17:37:00.553Z"</span><span class="tok-punc">,</span> <span class="tok-key">"target"</span><span class="tok-punc">:</span><span class="tok-str">"test/fixtures/bad-fixed.html"</span><span class="tok-punc">,</span> <span class="tok-key">"score"</span><span class="tok-punc">:</span><span class="tok-num">98</span><span class="tok-punc">,</span> <span class="tok-key">"threshold"</span><span class="tok-punc">:</span><span class="tok-num">90</span><span class="tok-punc">,</span> <span class="tok-key">"passed"</span><span class="tok-punc">:</span><span class="tok-bool">true</span>}</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="compat">
+  <div class="wrap">
+    <h2>Checks anything a browser renders</h2>
+    <div class="compat-row">
+      <span class="compat-pill">Plain HTML</span>
+      <span class="compat-pill">React / Next.js</span>
+      <span class="compat-pill">Vue / Nuxt</span>
+      <span class="compat-pill">Svelte</span>
+      <span class="compat-pill">Astro</span>
+      <span class="compat-pill">Local dev server</span>
+      <span class="compat-pill">Live URL</span>
+    </div>
+  </div>
+</div>
+
+<section id="features">
+  <div class="wrap">
+    <p class="kicker">Features</p>
+    <h2 class="title">Everything a real CI gate needs</h2>
+    <p class="lede">Four deterministic checks, plus the tooling to run them as a pipeline: diffing, regression gating, multi-page crawling, and a plain library API.</p>
+    <div class="bento">
+      <div class="bcard">
+        <div class="icon">01</div>
+        <h3>Color contrast</h3>
+        <p>Real relative-luminance contrast per text node, WCAG 2.1 AA, with a suggested passing hex color.</p>
+      </div>
+      <div class="bcard">
+        <div class="icon">02</div>
+        <h3>Type scale</h3>
+        <p>Flags font sizes that don't land on a clean scale step &mdash; usually unintentional em/rem drift.</p>
+      </div>
+      <div class="bcard">
+        <div class="icon">03</div>
+        <h3>Spacing grid</h3>
+        <p>Detects the page's 4px or 8px base unit and flags the margins and padding that break it.</p>
+      </div>
+      <div class="bcard">
+        <div class="icon">04</div>
+        <h3>Heading &amp; landmarks</h3>
+        <p>One h1, no skipped heading levels, a main landmark, alt text on every image.</p>
+      </div>
+      <div class="bcard span-2 dark">
+        <div class="icon">↗</div>
+        <h3>verdict diff</h3>
+        <div class="diff-illustration">
+          <span class="s">50</span><span class="arrow">&rarr;</span><span class="s after">98</span><span class="delta">+48</span>
+        </div>
+        <p>Pixel-level screenshot diff plus a fixed / introduced / persisting issue breakdown between two renders. This is real output from <code style="font-family:var(--mono);color:#d1d5db;">bad.html</code> &rarr; <code style="font-family:var(--mono);color:#d1d5db;">bad-fixed.html</code> in this repo.</p>
+      </div>
+      <div class="bcard span-2">
+        <div class="icon">⟲</div>
+        <h3>Regression gating</h3>
+        <p>Every run appends to a local score history. <code style="font-family:var(--mono);">verdict check</code> fails when a change drags the score below the last passing run for that target, not only when it misses the absolute threshold.</p>
+      </div>
+      <div class="bcard span-2">
+        <div class="icon">▦</div>
+        <h3>verdict crawl</h3>
+        <p>Runs the full check suite against several targets in one invocation and rolls them into a single pass/fail for the build. One failing page fails the crawl.</p>
+      </div>
+      <div class="bcard span-2 dark">
+        <div class="icon">{}</div>
+        <h3>Library API</h3>
+        <p>Same engine, no shell-out. <code style="font-family:var(--mono);color:#d1d5db;">import { check } from "verdict-ui"</code> and call it from your own scripts or test suite.</p>
+      </div>
+      <div class="bcard span-2">
+        <div class="icon">◧</div>
+        <h3>Browser extension</h3>
+        <p>Runs the same four checks live against the tab you have open. No build output, no CLI &mdash; a direct port of the same extraction and scoring code.</p>
+      </div>
+      <div class="bcard span-2 dark">
+        <div class="icon">↹</div>
+        <h3>Agent integration (MCP)</h3>
+        <p>Exposes <code style="font-family:var(--mono);color:#d1d5db;">verdict_check</code>, <code style="font-family:var(--mono);color:#d1d5db;">verdict_diff</code>, and <code style="font-family:var(--mono);color:#d1d5db;">verdict_crawl</code> as MCP tools, so your coding agent calls Verdict directly instead of a human copying CLI output back in.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <p class="kicker">FAQ</p>
+    <h2 class="title">Frequently asked questions</h2>
+    <div class="faq">
+
+      <div class="faq-item">
+        <button class="faq-q">Is the 80 threshold fixed?<svg class="faq-chev" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+        <div class="faq-a"><div class="faq-a-inner">No. <code>80</code> is the default value of a <code>--threshold</code> flag on every command (<code>check</code>, <code>diff</code>, <code>crawl</code>), set via commander's option defaults in <code>src/cli.ts</code>. Pass <code>--threshold 90</code> or <code>--threshold 60</code> and it uses that instead, per invocation. The history tab in the panel above shows the same fixture checked once at 80 and once at 90.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Does it use an LLM to judge design?<svg class="faq-chev" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+        <div class="faq-a"><div class="faq-a-inner">No. All four checks are ordinary deterministic code running against computed styles from a real Chromium render. Same input, same output, every time. For judgment calls that go beyond what a deterministic rule can decide, Verdict exposes its checks to your own coding agent over MCP instead of running a model of its own &mdash; the agent that already has the context and the reasoning calls the tool directly.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Does it need a headless browser install?<svg class="faq-chev" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+        <div class="faq-a"><div class="faq-a-inner">Yes, one time: <code>npx playwright install chromium</code> runs automatically as a postinstall step. On a bare Linux CI image you may also need <code>playwright install-deps</code>, which needs root &mdash; GitHub-hosted runners have it by default.</div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="closing" id="install">
+  <div class="wrap">
+    <h2>Ship interfaces you can verify.</h2>
+    <p class="lede" style="margin-bottom:32px;">Works against a local build, a running dev server, or a live URL. No account and no server to run.</p>
+    <div class="cmdbar">
+      <div class="cmdbox">
+        <span class="prompt">$</span> npm install verdict-ui &amp;&amp; npx verdict check ./dist
+        <button class="copy" type="button" onclick="copyCmd(this)">Copy</button>
+      </div>
+      <a class="btn btn-dark btn-lg" href="https://github.com/pranavkokati/verdict">View on GitHub</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <a class="brand" href="#top">
+        <svg class="mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <g>
+            <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(0 50 50)"/>
+            <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(45 50 50)"/>
+            <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(90 50 50)"/>
+            <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(135 50 50)"/>
+            <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(180 50 50)"/>
+            <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(225 50 50)"/>
+            <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(270 50 50)"/>
+            <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(315 50 50)"/>
+          </g>
+        </svg>
+        Verdict
+      </a>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Project</h4>
+          <ul>
+            <li><a href="https://github.com/pranavkokati/verdict">GitHub</a></li>
+            <li><a href="https://github.com/pranavkokati/verdict#readme">Documentation</a></li>
+            <li><a href="https://www.npmjs.com/package/verdict-ui">npm</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>About</h4>
+          <ul>
+            <li><a href="https://github.com/pranavkokati/verdict/blob/main/LICENSE">MIT License</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  var nav = document.getElementById('topnav');
+  function onScroll() {
+    if (window.scrollY > 8) nav.classList.add('is-scrolled');
+    else nav.classList.remove('is-scrolled');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  var fileHeads = {
+    terminal: '~/dist $ npx verdict-ui check test/fixtures/bad.html',
+    diff: '~/dist $ npx verdict-ui diff test/fixtures/bad.html test/fixtures/bad-fixed.html',
+    json: 'cat .verdict/result.json',
+    yaml: 'cat .github/workflows/verdict.yml',
+    jsonl: 'cat .verdict/history.jsonl'
+  };
+  var fileButtons = document.querySelectorAll('.file-btn');
+  var filePanes = document.querySelectorAll('.file-pane');
+  var fileHead = document.getElementById('fileHead');
+  fileButtons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      fileButtons.forEach(function (b) { b.classList.remove('active'); });
+      filePanes.forEach(function (p) { p.classList.remove('active'); });
+      btn.classList.add('active');
+      var key = btn.getAttribute('data-file');
+      document.querySelector('.file-pane[data-pane="' + key + '"]').classList.add('active');
+      fileHead.textContent = fileHeads[key];
+    });
+  });
+
+  function copyCmd(btn) {
+    var text = btn.parentElement.textContent.replace('Copy', '').replace('$', '').trim();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      var original = btn.textContent;
+      btn.textContent = 'Copied';
+      setTimeout(function () { btn.textContent = original; }, 1400);
+    }
+  }
+
+  var faqItems = document.querySelectorAll('.faq-item');
+  faqItems.forEach(function (item) {
+    var q = item.querySelector('.faq-q');
+    var a = item.querySelector('.faq-a');
+    q.addEventListener('click', function () {
+      var isOpen = item.classList.contains('open');
+      faqItems.forEach(function (i) {
+        i.classList.remove('open');
+        i.querySelector('.faq-a').style.maxHeight = null;
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        a.style.maxHeight = a.scrollHeight + 'px';
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
