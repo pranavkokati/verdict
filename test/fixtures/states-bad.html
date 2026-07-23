@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Interaction State Fixture -- Bad</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: sans-serif; margin: 0; padding: 32px; background: #ffffff; color: #1a1a1a; }
+
+  /* Bug 1: no focus style at all -- browser default outline explicitly
+     suppressed, nothing added back. Invisible to keyboard users. */
+  .no-focus-btn {
+    display: inline-block;
+    background: #0055ff;
+    color: #ffffff;
+    padding: 10px 18px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+  .no-focus-btn:focus-visible {
+    outline: none;
+  }
+
+  /* Bug 2: hover background turns near-white but text color never changes
+     from white -- passes fine at rest, fails badly on hover. */
+  .bad-hover-btn {
+    display: inline-block;
+    background: #0055ff;
+    color: #ffffff;
+    padding: 10px 18px;
+    border: 2px solid transparent;
+    font-size: 16px;
+  }
+  .bad-hover-btn:hover {
+    background: #f0f0f0;
+  }
+  .bad-hover-btn:focus-visible {
+    outline: 2px solid #0055ff;
+  }
+</style>
+</head>
+<body>
+  <h1>Interaction States Fixture</h1>
+  <p>Two buttons, two independent bugs -- one has no focus indicator, the other fails contrast on hover.</p>
+  <button class="no-focus-btn">No focus style</button>
+  <button class="bad-hover-btn">Bad hover contrast</button>
+</body>
+</html>

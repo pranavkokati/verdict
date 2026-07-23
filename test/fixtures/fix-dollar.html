@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Dollar-sign stylesheet fixture</title>
+<style>
+  body { margin: 0; font-family: sans-serif; }
+  /* Decoy rule, in the SAME stylesheet as the rule that actually gets
+     patched below. CSS.getStyleSheetText returns the whole sheet's text,
+     so this literal "$$"/"$&" sequence ends up inside the string that
+     cssPatcher.ts's stylesheet-rule patch path splices back into the HTML
+     source -- the exact case that broke naive String.replace(before, after). */
+  .price::after { content: "$$ special offer, save $&50 today!"; }
+  .low-contrast { color: #cccccc; background: #ffffff; font-size: 16px; padding: 8px; }
+</style>
+</head>
+<body>
+  <h1>Dollar Sign Fixture</h1>
+  <p class="low-contrast">This text fails contrast and lives in the same stylesheet as a decoy rule containing literal dollar-sign regex-pattern characters.</p>
+  <div class="price">Price</div>
+</body>
+</html>

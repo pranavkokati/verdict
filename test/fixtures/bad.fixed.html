@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Bad Fixture</title>
+<style>
+  body { font-family: sans-serif; margin: 0; background: #ffffff; }
+  .hero {background: #f2f2f2; padding: 17px 23px; padding-top: 16px; padding-right: 24px; padding-bottom: 16px; padding-left: 24px;}
+  .hero h3 { font-size: 15.3px; color: #6e6e6e; } /* skips h1/h2, low contrast, off-scale size */
+  .hero p { font-size: 13.7px; color: #6d6d6d; margin-top: 8px; } /* low contrast, off-scale, off-grid margin */
+  .card {margin: 11px; padding: 6px 13px; font-size: 18px; color: #757575; background: #ffffff; margin-top: 8px; margin-right: 8px; margin-bottom: 8px; margin-left: 8px; padding-top: 8px; padding-right: 16px; padding-bottom: 8px; padding-left: 16px;}
+  .footer h5 { font-size: 12.4px; color: #767676; } /* jumps from h3 to h5 */
+  img { width: 40px; height: 40px; }
+</style>
+</head>
+<body>
+  <div class="hero">
+    <h3 style="margin-top: 16px; margin-bottom: 16px;">Welcome</h3>
+    <p style="margin-bottom: 16px;">This is some body copy that is very hard to read against its background.</p>
+  </div>
+  <div class="card">Card content with an oddly specific font size.</div>
+  <div class="footer">
+    <h5 style="margin-top: 24px; margin-bottom: 24px;">Footer heading</h5>
+    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7" />
+  </div>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Semi-transparent overlay contrast fixture</title>
+<style>
+  * { box-sizing: border-box; }
+  /* Black page canvas. */
+  body { margin: 0; background: #000000; font-family: sans-serif; }
+  /* A 50%-opaque white overlay (a modal scrim / glassmorphism panel) over
+     the black page. True composited background is roughly rgb(128,128,128).
+     A naive check that drops the overlay's alpha and reads its raw RGB
+     values would instead treat this as opaque white (#ffffff). */
+  .overlay {
+    width: 500px;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.5);
+  }
+  /* Large text (>=24px): white text against the TRUE ~rgb(128,128,128)
+     composited background measures ~3.98:1, which clears the WCAG
+     large-text minimum of 3:1. Against a wrongly-assumed opaque white
+     background it would measure ~1:1 -- a false, severe failure. */
+  .overlay h1 {
+    color: #ffffff;
+    font-size: 28px;
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+  <div class="overlay">
+    <h1>Overlay heading text</h1>
+  </div>
+</body>
+</html>

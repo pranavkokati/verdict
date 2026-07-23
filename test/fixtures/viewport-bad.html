@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Viewport Fixture -- Bad</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: sans-serif; margin: 0; background: #ffffff; color: #1a1a1a; }
+
+  /* Structural parity bug: the primary nav is a real <nav> landmark on
+     wider screens, but is completely removed (not just re-laid-out) below
+     700px -- a very common "forgot the mobile hamburger menu" bug. */
+  nav { padding: 16px 24px; background: #f1f5f9; }
+  @media (max-width: 700px) {
+    nav { display: none; }
+  }
+
+  main { padding: 24px; }
+
+  /* Horizontal overflow bug: a fixed 500px-wide promo banner that never
+     shrinks, so it blows out the layout on any viewport narrower than
+     500px (mobile). */
+  .promo-banner {
+    width: 500px;
+    background: #0f172a;
+    color: #ffffff;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  /* Undersized tap target bug: a real, clickable icon-only button rendered
+     at 20x20px -- well under the 44x44px minimum touch target size. */
+  .icon-button {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: #0055ff;
+    border: none;
+    padding: 0;
+  }
+</style>
+</head>
+<body>
+  <nav role="navigation">
+    <a href="#">Home</a>
+    <a href="#">Pricing</a>
+    <a href="#">Docs</a>
+  </nav>
+  <main>
+    <h1>Acme Dashboard</h1>
+    <div class="promo-banner">Limited time offer -- upgrade today.</div>
+    <button class="icon-button" aria-label="Settings"></button>
+  </main>
+</body>
+</html>

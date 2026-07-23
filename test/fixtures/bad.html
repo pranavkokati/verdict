@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Bad Fixture</title>
+<style>
+  body { font-family: sans-serif; margin: 0; background: #ffffff; }
+  .hero { background: #f2f2f2; padding: 17px 23px; }
+  .hero h3 { font-size: 15.3px; color: #cccccc; } /* skips h1/h2, low contrast, off-scale size */
+  .hero p { font-size: 13.7px; color: #dddddd; margin-top: 9px; } /* low contrast, off-scale, off-grid margin */
+  .card { margin: 11px; padding: 6px 13px; font-size: 17.2px; color: #e5e5e5; background: #ffffff; }
+  .footer h5 { font-size: 12.4px; color: #888888; } /* jumps from h3 to h5 */
+  img { width: 40px; height: 40px; }
+</style>
+</head>
+<body>
+  <div class="hero">
+    <h3>Welcome</h3>
+    <p>This is some body copy that is very hard to read against its background.</p>
+  </div>
+  <div class="card">Card content with an oddly specific font size.</div>
+  <div class="footer">
+    <h5>Footer heading</h5>
+    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7" />
+  </div>
+</body>
+</html>

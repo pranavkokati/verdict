@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Verdict: Design QA for AI-generated interfaces</title>
+<meta name="description" content="Verdict renders your AI-generated UI in a real browser, checks it against WCAG contrast, type scale, spacing, and heading rules, auto-fixes what's safely fixable, and catches cross-page and cross-viewport drift. Get a score you can enforce in CI." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%230f172a'%3E%3Cpath d='M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z'/%3E%3Cpath d='M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z' transform='rotate(45 50 50)'/%3E%3Cpath d='M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z' transform='rotate(90 50 50)'/%3E%3Cpath d='M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z' transform='rotate(135 50 50)'/%3E%3Cpath d='M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z' transform='rotate(180 50 50)'/%3E%3Cpath d='M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z' transform='rotate(225 50 50)'/%3E%3Cpath d='M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z' transform='rotate(270 50 50)'/%3E%3Cpath d='M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z' transform='rotate(315 50 50)'/%3E%3C/g%3E%3C/svg%3E" />
+<style>
+  :root {
+    --ink: #0f1115;
+    --ink-2: #333844;
+    --ink-3: #6b7280;
+    --line: #e5e7eb;
+    --line-2: #eceef1;
+    --bg: #ffffff;
+    --bg-soft: #fafafa;
+    --panel: #0f1115;
+    --panel-2: #1a1d24;
+    --good: #16a34a;
+    --bad: #dc2626;
+    --warn: #d97706;
+    --radius: 12px;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; font-family: var(--sans); color: var(--ink); background: var(--bg);
+    line-height: 1.5; -webkit-font-smoothing: antialiased; font-size: 16px;
+  }
+  a { color: inherit; }
+  img, svg { display: block; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- nav ---------- */
+  .nav-spacer { height: 84px; }
+  nav.top {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; justify-content: center; padding: 16px 20px 0;
+    pointer-events: none;
+  }
+  .nav-inner {
+    pointer-events: auto;
+    width: 100%; max-width: 1120px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px 10px 16px;
+    background: rgba(255,255,255,0.72);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 1px 2px rgba(15,17,21,0.04);
+    transition: box-shadow .2s ease, background .2s ease;
+  }
+  nav.top.is-scrolled .nav-inner {
+    box-shadow: 0 8px 24px -8px rgba(15,17,21,0.16);
+    background: rgba(255,255,255,0.88);
+  }
+  .brand { display: flex; align-items: center; gap: 9px; font-weight: 600; font-size: 15px; letter-spacing: -0.01em; text-decoration: none; color: var(--ink); }
+  .brand .mark { width: 22px; height: 22px; flex-shrink: 0; }
+  .brand .mark path { fill: var(--ink); }
+
+  .navlinks { display: flex; align-items: center; gap: 28px; font-size: 14px; color: var(--ink-3); margin-left: 8px; }
+  .navlinks a { text-decoration: none; }
+  .navlinks a:hover { color: var(--ink); }
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    padding: 9px 16px; border-radius: 999px; font-size: 13.5px; font-weight: 600;
+    text-decoration: none; border: 1px solid transparent; white-space: nowrap;
+    transition: background .15s ease, border-color .15s ease, opacity .15s ease;
+  }
+  .btn-dark { background: var(--panel); color: white; }
+  .btn-dark:hover { opacity: 0.88; }
+  .btn-outline { background: transparent; color: var(--ink); border-color: var(--line); }
+  .btn-outline:hover { border-color: #c7cbd1; background: var(--bg-soft); }
+  .btn-lg { padding: 13px 22px; font-size: 14.5px; border-radius: 10px; }
+
+  /* ---------- hero ---------- */
+  .hero { position: relative; padding: 76px 0 0; }
+  .hero .inner { text-align: center; }
+  h1.headline {
+    font-size: 58px; line-height: 1.08; letter-spacing: -0.032em; font-weight: 700;
+    margin: 0 0 20px; color: var(--ink);
+  }
+  .sub {
+    font-size: 18.5px; color: var(--ink-3); max-width: 600px; margin: 0 auto 36px; line-height: 1.55;
+  }
+  .cta-row { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  .install-line {
+    font-size: 13.5px; color: var(--ink-3); font-family: var(--mono);
+  }
+  .install-line code { background: var(--bg-soft); border: 1px solid var(--line); padding: 2px 8px; border-radius: 6px; color: var(--ink-2); }
+
+  /* hero screenshot panel */
+  .hero-panel-wrap { padding: 56px 0 0; }
+  .hero-panel {
+    max-width: 760px; margin: 0 auto; border-radius: 16px;
+    background: var(--panel);
+    box-shadow: 0 30px 60px -24px rgba(15,17,21,0.35), 0 1px 0 rgba(255,255,255,0.04) inset;
+    border: 1px solid #262a33;
+    overflow: hidden;
+  }
+  .hero-panel .chrome { display: flex; align-items: center; gap: 7px; padding: 13px 16px; border-bottom: 1px solid #23262e; }
+  .hero-panel .chrome span { width: 10px; height: 10px; border-radius: 50%; background: #2c303a; }
+  .hero-panel pre {
+    margin: 0; padding: 22px 24px 28px; font-family: var(--mono); font-size: 12.8px; color: #c2c6ce;
+    overflow-x: auto; line-height: 1.7; white-space: pre;
+  }
+  .hero-panel .cmdline { color: #6b7280; }
+  .hero-panel .cmdline b { color: #f4f4f5; font-weight: 500; }
+  .hero-panel .fail { color: #f87171; font-weight: 600; }
+  .hero-panel .pass { color: #4ade80; font-weight: 600; }
+  .hero-panel .hd { color: white; font-weight: 700; }
+
+  /* ---------- sections ---------- */
+  section { padding: 92px 0; border-top: 1px solid var(--line-2); }
+  .kicker { font-size: 12.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 12px; text-align: center; }
+  h2.title { font-size: 32px; letter-spacing: -0.025em; font-weight: 700; text-align: center; margin: 0 0 14px; }
+  p.lede { font-size: 16px; color: var(--ink-3); text-align: center; max-width: 580px; margin: 0 auto 56px; line-height: 1.6; }
+
+  /* compare */
+  .loop { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; max-width: 900px; margin: 0 auto; }
+  .loop .card { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 26px 22px; }
+  .loop .card .tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; margin-bottom: 14px; }
+  .loop .card.bad .tag { background: #fef2f2; color: #b91c1c; }
+  .loop .card.good .tag { background: #f0fdf4; color: #15803d; }
+  .loop .card h3 { font-size: 16px; margin: 0 0 12px; letter-spacing: -0.01em; }
+  .loop .card ol { margin: 0; padding-left: 18px; font-size: 14px; color: var(--ink-3); }
+  .loop .card ol li { margin-bottom: 9px; }
+  .loop .card ol li b { color: var(--ink); font-weight: 600; }
+
+  /* checks grid */
+  .grid4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .chk { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px 26px; transition: border-color .15s ease; }
+  .chk:hover { border-color: #d1d5db; }
+  .chk .num { font-family: var(--mono); font-size: 12px; color: #9ca3af; margin-bottom: 12px; }
+  .chk h3 { font-size: 16px; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .chk p { font-size: 14px; color: var(--ink-3); margin: 0; line-height: 1.55; }
+
+  /* workflow grid */
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .wf { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+  .wf code.k { display: inline-block; font-family: var(--mono); font-size: 11.5px; background: var(--panel); color: #d1d5db; padding: 4px 10px; border-radius: 6px; margin-bottom: 14px; }
+  .wf h3 { font-size: 15px; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .wf p { font-size: 13.5px; color: var(--ink-3); margin: 0; line-height: 1.55; }
+
+  /* install */
+  .install-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 900px; margin: 0 auto; }
+  .code-block { background: var(--panel); border-radius: var(--radius); padding: 20px 22px; font-family: var(--mono); font-size: 12.5px; color: #c2c6ce; line-height: 1.85; overflow-x: auto; white-space: pre; border: 1px solid #23262e; }
+  .code-block .c { color: #6b7280; }
+  .code-block .g { color: #4ade80; }
+  .code-block .label { display: block; font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; font-family: var(--sans); }
+
+  footer { padding: 48px 0 64px; border-top: 1px solid var(--line-2); }
+  footer .wrap { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  footer .f-links { display: flex; gap: 24px; font-size: 13.5px; color: var(--ink-3); }
+  footer .f-links a { text-decoration: none; }
+  footer .f-links a:hover { color: var(--ink); }
+  footer .copy { font-size: 13.5px; color: #9ca3af; }
+
+  @media (max-width: 760px) {
+    .wrap { padding: 0 18px; }
+    .nav-inner { border-radius: 20px; padding: 10px 14px; }
+    .navlinks { display: none; }
+    h1.headline { font-size: 34px; }
+    .sub { font-size: 15.5px; }
+    .loop, .grid4, .install-grid { grid-template-columns: 1fr; }
+    .grid3 { grid-template-columns: 1fr; }
+    .cta-row { flex-direction: column; align-items: stretch; }
+    .cta-row .btn { width: 100%; }
+    section { padding: 56px 0; }
+    h2.title { font-size: 26px; }
+    .hero { padding-top: 56px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="top" id="topnav">
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <svg class="mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <g>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(0 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(45 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(90 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(135 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(180 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(225 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(270 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(315 50 50)"/>
+        </g>
+      </svg>
+      Verdict
+    </a>
+    <ul class="navlinks">
+      <li><a href="#checks">Checks</a></li>
+      <li><a href="#workflow">Workflow</a></li>
+      <li><a href="#install">Install</a></li>
+    </ul>
+    <div class="nav-right">
+      <a class="btn btn-outline" href="https://github.com/pranavkokati/verdict">GitHub</a>
+      <a class="btn btn-dark" href="#install">Get started</a>
+    </div>
+  </div>
+</nav>
+<div class="nav-spacer"></div>
+
+<div id="top" class="hero">
+  <div class="wrap inner">
+    <h1 class="headline">Design QA for interfaces<br />built by AI agents.</h1>
+    <p class="sub">Verdict renders your UI in a real browser, checks it against WCAG contrast, type scale, spacing, and heading rules, auto-fixes what's safely fixable, and catches drift across pages and viewports. You get a score, a fix list, and an exit code your CI can enforce.</p>
+    <div class="cta-row">
+      <a class="btn btn-dark btn-lg" href="#install">Get started</a>
+      <a class="btn btn-outline btn-lg" href="https://github.com/pranavkokati/verdict">View on GitHub</a>
+    </div>
+  </div>
+
+  <div class="hero-panel-wrap">
+    <div class="wrap">
+      <div class="hero-panel">
+        <div class="chrome"><span></span><span></span><span></span></div>
+        <pre><span class="cmdline">$ <b>npx verdict-ui check ./dist/index.html</b></span>
+────────────────────────────────────────────────
+  <span class="hd">Verdict</span>  50/100  (threshold 80)  <span class="fail">FAIL</span>
+────────────────────────────────────────────────
+  ✗ Color Contrast (WCAG 2.1)        (4 issues)
+  ✗ Type Scale Consistency           (1 issue)
+  ✗ Spacing Grid Consistency         (18 issues)
+  ✗ Heading &amp; Landmark Hierarchy     (4 issues)
+────────────────────────────────────────────────
+  5 error(s), 4 warning(s), 18 info
+  Report: .verdict/report.html
+────────────────────────────────────────────────
+
+<span class="cmdline">$ <b>verdict fix ./dist/index.html</b></span>
+────────────────────────────────────────────────
+  Verdict fix  50 -&gt; 81  (+31)  23 fixed
+────────────────────────────────────────────────
+  ✓ .hero h3  color -&gt; #6e6e6e  (stylesheet-rule)
+  ✓ .card     font-size -&gt; 18px  (stylesheet-rule)
+  ... 21 more
+────────────────────────────────────────────────
+  4 issue(s) need manual/agent attention
+────────────────────────────────────────────────</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <p class="kicker">Why it exists</p>
+    <h2 class="title">Two ways to get an agent to build good UI</h2>
+    <p class="lede">One tells the agent what good design looks like and hopes it listened. The other checks what the agent actually shipped.</p>
+    <div class="loop">
+      <div class="card bad">
+        <span class="tag">Prompt injection</span>
+        <h3>What most "taste" tools do</h3>
+        <ol>
+          <li>Collect design guideline prompts from other sources</li>
+          <li>Inject them into the agent's context before it writes code</li>
+          <li><b>There is no step that confirms the agent followed them.</b> You get a prompt, not a result.</li>
+        </ol>
+      </div>
+      <div class="card good">
+        <span class="tag">Verdict</span>
+        <h3>What Verdict does</h3>
+        <ol>
+          <li>Render the agent's actual output in real Chromium</li>
+          <li>Run deterministic checks against the computed styles and layout</li>
+          <li><b>Return a score, a fix list, and a CI exit code.</b> The result is something you can verify.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="checks">
+  <div class="wrap">
+    <p class="kicker">Four checks</p>
+    <h2 class="title">Plain code, not a model call</h2>
+    <p class="lede">Every check runs against the rendered DOM with ordinary, deterministic logic. Same input, same output, every time.</p>
+    <div class="grid4">
+      <div class="chk">
+        <div class="num">01</div>
+        <h3>Color contrast, WCAG 2.1</h3>
+        <p>Computes the real relative-luminance contrast ratio for every text node against its background. Flags anything under the AA minimum and suggests a replacement color that passes.</p>
+      </div>
+      <div class="chk">
+        <div class="num">02</div>
+        <h3>Type scale consistency</h3>
+        <p>Collects every font size on the page and flags values that don't land on a clean scale step, a common sign of unintentional em or rem drift.</p>
+      </div>
+      <div class="chk">
+        <div class="num">03</div>
+        <h3>Spacing grid consistency</h3>
+        <p>Checks whether margin, padding, and gap values are drawn from a consistent 4px or 8px base unit, and flags the ones that aren't.</p>
+      </div>
+      <div class="chk">
+        <div class="num">04</div>
+        <h3>Heading and landmark structure</h3>
+        <p>Confirms one h1, no skipped heading levels, a main landmark, and alt text on every image.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="workflow">
+  <div class="wrap">
+    <p class="kicker">Beyond one check</p>
+    <h2 class="title">Built for a CI pipeline, not a one-off lint</h2>
+    <p class="lede">Score history, visual diffing, auto-fix, multi-page crawling, multi-viewport testing, and forced interaction-state checks. The parts a real gate needs that a single prompt can't give you.</p>
+    <div class="grid3">
+      <div class="wf">
+        <code class="k">verdict diff</code>
+        <h3>Prove an improvement</h3>
+        <p>Pixel-level screenshot diff, plus a list of issues fixed, introduced, and still open between two renders.</p>
+      </div>
+      <div class="wf">
+        <code class="k">verdict check</code>
+        <h3>Regression gating</h3>
+        <p>Fails the build when a change drags the score below the last passing run, not only when it misses an absolute threshold.</p>
+      </div>
+      <div class="wf">
+        <code class="k">verdict fix</code>
+        <h3>Auto-patch what's fixable</h3>
+        <p>Finds the exact CSS declaration behind contrast, type-scale, and spacing issues via Chrome's own cascade engine and patches it directly, verified against the source before it's applied.</p>
+      </div>
+      <div class="wf">
+        <code class="k">verdict crawl</code>
+        <h3>Whole sites, one drift check</h3>
+        <p>Checks several pages in one run, rolls them into a single pass or fail, and compares shared components across every page -- catching an h1 or a primary button that quietly drifted on one route.</p>
+      </div>
+      <div class="wf">
+        <code class="k">verdict viewport</code>
+        <h3>Every breakpoint</h3>
+        <p>Renders one page at mobile, tablet, and desktop widths and flags horizontal overflow, undersized tap targets, and headings or landmarks a breakpoint silently hides.</p>
+      </div>
+      <div class="wf">
+        <code class="k">verdict states</code>
+        <h3>Nobody checks :hover</h3>
+        <p>Forces every button and link through :hover, :focus-visible, and :active via Chrome's own DevTools protocol, and flags missing focus indicators and contrast that only breaks on interaction.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <p class="kicker">Get started</p>
+    <h2 class="title">Two commands and no configuration</h2>
+    <p class="lede">Works against a local build, a running dev server, or a live URL. No account and no server to run.</p>
+    <div class="install-grid">
+      <div class="code-block">
+        <span class="label">Install</span>
+        <span class="c"># install</span><br />
+        npm install verdict-ui<br />
+        npx playwright install chromium<br />
+        <br />
+        <span class="c"># check a build</span><br />
+        npx verdict-ui check ./dist/index.html
+      </div>
+      <div class="code-block">
+        <span class="label">CI</span>
+        <span class="c"># .github/workflows/verdict.yml</span><br />
+        - run: playwright install --with-deps<br />
+        - run: <span class="g">npx verdict-ui check ./dist</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="g">--threshold 80</span><br />
+        <br />
+        <span class="c"># exits 1 on fail, blocks the PR</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <svg class="mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <g>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(0 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(45 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(90 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(135 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(180 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(225 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(270 50 50)"/>
+          <path d="M50 50 C46 34 41 20 50 6 C59 20 54 34 50 50 Z" transform="rotate(315 50 50)"/>
+        </g>
+      </svg>
+      Verdict
+    </a>
+    <div class="f-links">
+      <a href="https://github.com/pranavkokati/verdict">GitHub</a>
+      <a href="https://github.com/pranavkokati/verdict#readme">Docs</a>
+      <a href="https://www.npmjs.com/package/verdict-ui">npm</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  var nav = document.getElementById('topnav');
+  var onScroll = function () {
+    if (window.scrollY > 8) nav.classList.add('is-scrolled');
+    else nav.classList.remove('is-scrolled');
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+# Example CI gate using Verdict. Copy into your own repo's .github/workflows/
+# and point `TARGET` at your built output (a static file) or a URL your
+# build step serves (e.g. a preview deployment).
+#
+# This is the concrete piece prompt-injection "taste" tools
+# don't have: a pass/fail gate on a PR, driven by objective, reproducible
+# checks against the actual rendered output -- not a prompt you hope the
+# agent followed.
+name: Verdict design QA
+
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "public/**"
+
+jobs:
+  verdict:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Build your own app however it normally builds.
+      - name: Build app
+        run: |
+          npm ci
+          npm run build
+
+      - name: Install Verdict
+        run: npm install --no-save verdict-ui
+
+      # Root permissions are available on GitHub-hosted runners, so
+      # install-deps works here even though it doesn't in unprivileged
+      # sandboxes.
+      - name: Install headless browser
+        run: |
+          npx playwright install --with-deps chromium
+
+      - name: Restore score history
+        uses: actions/cache@v4
+        with:
+          path: .verdict
+          key: verdict-history-${{ github.repository }}
+
+      - name: Run Verdict
+        run: npx verdict-ui check ./dist/index.html --threshold 80
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verdict-report
+          path: .verdict/

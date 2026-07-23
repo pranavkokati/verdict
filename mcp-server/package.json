@@ -1,0 +1,21 @@
+{
+  "name": "verdict-mcp",
+  "version": "0.3.1",
+  "description": "MCP server exposing Verdict's design-QA checks (check, diff, crawl, fix, viewport, states) as tools for coding agents -- Claude Code, Cursor, or anything else that speaks MCP.",
+  "type": "module",
+  "license": "MIT",
+  "bin": { "verdict-mcp": "dist/server.js" },
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "npm run build && node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "typescript": "^5.5.3"
+  }
+}

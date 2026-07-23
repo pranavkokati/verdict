@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Dark-mode body background contrast fixture</title>
+<style>
+  /* The page's background color is set directly on <body> -- the single
+     most common way a page (especially a dark-themed one) sets its
+     background -- with no wrapping <div> re-declaring it. Light gray text
+     sits directly against it with no intermediate element. True contrast
+     is ~15:1 (light text on near-black); a background-resolution pass that
+     can't see <body>'s own background at all would fall back to an
+     assumed opaque white canvas, giving ~1.26:1 -- a false, severe failure
+     on what is actually a properly-contrasted dark-mode page. */
+  body {
+    margin: 0;
+    padding: 32px;
+    background: #111111;
+    font-family: sans-serif;
+  }
+  p {
+    color: #e5e5e5;
+    font-size: 16px;
+  }
+</style>
+</head>
+<body>
+  <h1 style="color:#e5e5e5;">Dark mode page</h1>
+  <p>Body text sitting directly against the dark page background, with no wrapping element re-declaring a background color.</p>
+</body>
+</html>

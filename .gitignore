@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.verdict/
+.verdict-*/
+*.log
+.DS_Store
+*.png
+!extension/icon*.png
+*.mjs
+!test/**/*.mjs

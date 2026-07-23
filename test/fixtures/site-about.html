@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Site Fixture -- About</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: sans-serif; margin: 0; background: #ffffff; color: #1a1a1a; }
+  /* Drift #1: h1 is 28px here instead of 32px on home -- someone hand-tuned
+     this page's hero instead of reusing the shared heading style. */
+  h1 { font-size: 28px; font-weight: 700; color: #111111; margin: 0 0 16px 0; }
+  p { font-size: 16px; color: #333333; margin: 0 0 16px 0; }
+  header { padding: 24px 32px; }
+  main { padding: 32px; }
+  /* Drift #2: a slightly different, hand-picked blue instead of the shared
+     --brand-blue token used on the home page's button. */
+  .btn-primary {
+    display: inline-block;
+    background: #0044cc;
+    color: #ffffff;
+    font-size: 16px;
+    padding: 8px 16px;
+    margin-top: 8px;
+    text-decoration: none;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+  <header role="banner">
+    <h1>About Acme</h1>
+  </header>
+  <main>
+    <p>Consistent body copy that reads the same way on every page of the site.</p>
+    <a class="btn-primary" href="#">Contact us</a>
+  </main>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Viewport Fixture -- Good</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: sans-serif; margin: 0; background: #ffffff; color: #1a1a1a; }
+
+  /* The nav stays a real <nav> landmark at every width -- it just
+     re-wraps, it's never removed from the accessibility tree. Each link
+     gets enough padding to clear the 44x44px tap-target minimum. */
+  nav { padding: 16px 24px; background: #f1f5f9; display: flex; flex-wrap: wrap; gap: 12px; }
+  nav a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px 16px;
+    box-sizing: border-box;
+  }
+
+  main { padding: 24px; }
+
+  /* Fully fluid -- never wider than its container, so it never overflows
+     any of the tested viewports. */
+  .promo-banner {
+    width: 100%;
+    max-width: 100%;
+    background: #0f172a;
+    color: #ffffff;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  /* A real 44x44px tap target. */
+  .icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: #0055ff;
+    border: none;
+    padding: 0;
+  }
+</style>
+</head>
+<body>
+  <nav role="navigation">
+    <a href="#">Home</a>
+    <a href="#">Pricing</a>
+    <a href="#">Docs</a>
+  </nav>
+  <main>
+    <h1>Acme Dashboard</h1>
+    <div class="promo-banner">Limited time offer -- upgrade today.</div>
+    <button class="icon-button" aria-label="Settings"></button>
+  </main>
+</body>
+</html>
